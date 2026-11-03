@@ -22,7 +22,7 @@
 
 | Role | Name | Enrollment No. | GitHub Username |
 |------|------|----------------|-----------------|
-| Group Lead | Simran Sobhani | 2501010451 | [Simran-Sobhani](https://github.com/Simran-Sobhani) |
+| Group Lead | Simran V Sobhani | 2501010451 | [Simran-Sobhani](https://github.com/Simran-Sobhani) |
 | Member 2 | Vansh Gaur | 2501010494 | [Glitch-On](https://github.com/Glitch-On) |
 | Member 3 | Mayank Dhanuka | 2501010269 | [hellseye](https://github.com/hellseye) |
 | Member 4 | Shashank Badhautia | 2501010419 | [ShashankBadhautia](https://github.com/ShashankBadhautia) |
