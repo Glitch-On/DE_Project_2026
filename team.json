@@ -1,0 +1,15 @@
+{
+  "team_number": "T0022",
+  "group_lead": { 
+    "name": "Simran Sobhani", 
+    "enrollment_no": "2501010451", 
+    "github": "Simran-Sobhani" 
+    },
+  "members": [
+    { "name": "Vansh Gaur", "enrollment_no": "2501010494", "github": "Glitch-On" },
+    { "name": "Mayank Dhanuka", "enrollment_no": "2501010269", "github": "hellseye" },
+    { "name": "Shashank Badhautia", "enrollment_no": "2501010419", "github": "ShashankBadhautia" }
+  ],
+  "postgres_version": "7.10.0",
+  "laptop_used_for_benchmarks": "Macbook Pro M4"
+}
