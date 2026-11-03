@@ -27,7 +27,7 @@
 | Member 3 | Mayank Dhanuka | 2501010269 | [hellseye](https://github.com/hellseye) |
 | Member 4 | Shashank Badhautia | 2501010419 | [ShashankBadhautia](https://github.com/ShashankBadhautia) |
 
-**Team No.:** T0022 · **Section:** ____ · **Repository URL:** https://github.com/Glitch-On/DE_Project_2026
+**Team No.:** T0022 · **Section:** B · **Repository URL:** https://github.com/Glitch-On/DE_Project_2026
 
 ---
 
