@@ -1,0 +1,60 @@
+=== R10 run 1 ===
+Limit  (cost=5134.40..5145.79 rows=100 width=44) (actual time=4.876..5.665 rows=100.00 loops=1)
+  Buffers: shared hit=2343
+  ->  Gather Merge  (cost=5134.40..5446.90 rows=2742 width=44) (actual time=4.876..5.661 rows=100.00 loops=1)
+        Workers Planned: 1
+        Workers Launched: 1
+        Buffers: shared hit=2343
+        ->  Sort  (cost=4134.39..4138.42 rows=1613 width=44) (actual time=4.088..4.090 rows=73.00 loops=2)
+              Sort Key: ((delivered_at - placed_at)) DESC
+              Sort Method: top-N heapsort  Memory: 36kB
+              Buffers: shared hit=2343
+              Worker 0:  Sort Method: top-N heapsort  Memory: 36kB
+              ->  Parallel Seq Scan on orders  (cost=0.00..4072.74 rows=1613 width=44) (actual time=3.677..3.992 rows=1182.50 loops=2)
+                    Filter: ((placed_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone) AND ((delivered_at - placed_at) > '01:00:00'::interval))
+                    Rows Removed by Filter: 73818
+                    Buffers: shared hit=2304
+Planning:
+  Buffers: shared hit=94
+Planning Time: 0.173 ms
+Execution Time: 5.689 ms
+=== R10 run 2 ===
+Limit  (cost=5134.40..5145.79 rows=100 width=44) (actual time=4.656..5.541 rows=100.00 loops=1)
+  Buffers: shared hit=2343
+  ->  Gather Merge  (cost=5134.40..5446.90 rows=2742 width=44) (actual time=4.655..5.533 rows=100.00 loops=1)
+        Workers Planned: 1
+        Workers Launched: 1
+        Buffers: shared hit=2343
+        ->  Sort  (cost=4134.39..4138.42 rows=1613 width=44) (actual time=3.835..3.837 rows=80.00 loops=2)
+              Sort Key: ((delivered_at - placed_at)) DESC
+              Sort Method: top-N heapsort  Memory: 36kB
+              Buffers: shared hit=2343
+              Worker 0:  Sort Method: top-N heapsort  Memory: 36kB
+              ->  Parallel Seq Scan on orders  (cost=0.00..4072.74 rows=1613 width=44) (actual time=3.393..3.714 rows=1182.50 loops=2)
+                    Filter: ((placed_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone) AND ((delivered_at - placed_at) > '01:00:00'::interval))
+                    Rows Removed by Filter: 73818
+                    Buffers: shared hit=2304
+Planning:
+  Buffers: shared hit=94
+Planning Time: 0.181 ms
+Execution Time: 5.568 ms
+=== R10 run 3 ===
+Limit  (cost=5134.40..5145.79 rows=100 width=44) (actual time=4.781..5.484 rows=100.00 loops=1)
+  Buffers: shared hit=2343
+  ->  Gather Merge  (cost=5134.40..5446.90 rows=2742 width=44) (actual time=4.780..5.477 rows=100.00 loops=1)
+        Workers Planned: 1
+        Workers Launched: 1
+        Buffers: shared hit=2343
+        ->  Sort  (cost=4134.39..4138.42 rows=1613 width=44) (actual time=3.948..3.950 rows=78.00 loops=2)
+              Sort Key: ((delivered_at - placed_at)) DESC
+              Sort Method: top-N heapsort  Memory: 36kB
+              Buffers: shared hit=2343
+              Worker 0:  Sort Method: top-N heapsort  Memory: 37kB
+              ->  Parallel Seq Scan on orders  (cost=0.00..4072.74 rows=1613 width=44) (actual time=3.536..3.851 rows=1182.50 loops=2)
+                    Filter: ((placed_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone) AND ((delivered_at - placed_at) > '01:00:00'::interval))
+                    Rows Removed by Filter: 73818
+                    Buffers: shared hit=2304
+Planning:
+  Buffers: shared hit=94
+Planning Time: 0.164 ms
+Execution Time: 5.520 ms
