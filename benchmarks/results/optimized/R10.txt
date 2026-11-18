@@ -1,0 +1,54 @@
+=== R10 run 1 ===
+Limit  (cost=600.13..600.38 rows=100 width=44) (actual time=28.656..28.672 rows=100.00 loops=1)
+  Buffers: shared hit=80
+  ->  Sort  (cost=600.13..607.03 rows=2763 width=44) (actual time=28.655..28.659 rows=100.00 loops=1)
+        Sort Key: ((delivered_at - placed_at)) DESC
+        Sort Method: top-N heapsort  Memory: 36kB
+        Buffers: shared hit=80
+        ->  Index Only Scan using orders_placed_at_idx on orders  (cost=0.42..494.53 rows=2763 width=44) (actual time=0.040..3.129 rows=2365.00 loops=1)
+              Index Cond: ((placed_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+              Filter: ((delivered_at - placed_at) > '01:00:00'::interval)
+              Rows Removed by Filter: 5876
+              Heap Fetches: 90
+              Index Searches: 1
+              Buffers: shared hit=75
+Planning:
+  Buffers: shared hit=271
+Planning Time: 4.140 ms
+Execution Time: 28.760 ms
+=== R10 run 2 ===
+Limit  (cost=600.13..600.38 rows=100 width=44) (actual time=1.566..1.575 rows=100.00 loops=1)
+  Buffers: shared hit=80
+  ->  Sort  (cost=600.13..607.03 rows=2763 width=44) (actual time=1.565..1.569 rows=100.00 loops=1)
+        Sort Key: ((delivered_at - placed_at)) DESC
+        Sort Method: top-N heapsort  Memory: 36kB
+        Buffers: shared hit=80
+        ->  Index Only Scan using orders_placed_at_idx on orders  (cost=0.42..494.53 rows=2763 width=44) (actual time=0.013..1.229 rows=2365.00 loops=1)
+              Index Cond: ((placed_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+              Filter: ((delivered_at - placed_at) > '01:00:00'::interval)
+              Rows Removed by Filter: 5876
+              Heap Fetches: 90
+              Index Searches: 1
+              Buffers: shared hit=75
+Planning:
+  Buffers: shared hit=271
+Planning Time: 0.861 ms
+Execution Time: 1.614 ms
+=== R10 run 3 ===
+Limit  (cost=600.13..600.38 rows=100 width=44) (actual time=3.805..3.829 rows=100.00 loops=1)
+  Buffers: shared hit=80
+  ->  Sort  (cost=600.13..607.03 rows=2763 width=44) (actual time=3.804..3.814 rows=100.00 loops=1)
+        Sort Key: ((delivered_at - placed_at)) DESC
+        Sort Method: top-N heapsort  Memory: 36kB
+        Buffers: shared hit=80
+        ->  Index Only Scan using orders_placed_at_idx on orders  (cost=0.42..494.53 rows=2763 width=44) (actual time=0.027..2.948 rows=2365.00 loops=1)
+              Index Cond: ((placed_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+              Filter: ((delivered_at - placed_at) > '01:00:00'::interval)
+              Rows Removed by Filter: 5876
+              Heap Fetches: 90
+              Index Searches: 1
+              Buffers: shared hit=75
+Planning:
+  Buffers: shared hit=271
+Planning Time: 1.587 ms
+Execution Time: 3.902 ms

@@ -1,0 +1,63 @@
+=== W02 run 1 ===
+Update on orders  (cost=2.20..10.21 rows=0 width=0) (actual time=2.044..2.045 rows=0.00 loops=1)
+  Buffers: shared hit=132
+  InitPlan 1
+    ->  Limit  (cost=0.14..1.78 rows=1 width=12) (actual time=0.013..0.014 rows=1.00 loops=1)
+          Buffers: shared hit=2
+          ->  Index Scan using orders_unassigned_placed_idx on orders orders_1  (cost=0.14..8.32 rows=5 width=12) (actual time=0.012..0.012 rows=1.00 loops=1)
+                Filter: ((status)::text = 'ACCEPTED'::text)
+                Rows Removed by Filter: 1
+                Index Searches: 1
+                Buffers: shared hit=2
+  ->  Index Scan using orders_pkey on orders  (cost=0.42..8.44 rows=1 width=78) (actual time=0.041..0.043 rows=1.00 loops=1)
+        Index Cond: (order_id = (InitPlan 1).col1)
+        Index Searches: 1
+        Buffers: shared hit=8
+Planning:
+  Buffers: shared hit=292
+Planning Time: 1.092 ms
+Trigger for constraint orders_partner_id_fkey: time=0.357 calls=1
+Trigger orders_coupon_min_order_trigger: time=0.314 calls=1
+Execution Time: 2.529 ms
+=== W02 run 2 ===
+Update on orders  (cost=2.20..10.21 rows=0 width=0) (actual time=2.719..2.720 rows=0.00 loops=1)
+  Buffers: shared hit=132
+  InitPlan 1
+    ->  Limit  (cost=0.14..1.78 rows=1 width=12) (actual time=0.017..0.018 rows=1.00 loops=1)
+          Buffers: shared hit=2
+          ->  Index Scan using orders_unassigned_placed_idx on orders orders_1  (cost=0.14..8.32 rows=5 width=12) (actual time=0.016..0.016 rows=1.00 loops=1)
+                Filter: ((status)::text = 'ACCEPTED'::text)
+                Rows Removed by Filter: 1
+                Index Searches: 1
+                Buffers: shared hit=2
+  ->  Index Scan using orders_pkey on orders  (cost=0.42..8.44 rows=1 width=78) (actual time=0.044..0.047 rows=1.00 loops=1)
+        Index Cond: (order_id = (InitPlan 1).col1)
+        Index Searches: 1
+        Buffers: shared hit=8
+Planning:
+  Buffers: shared hit=292
+Planning Time: 1.683 ms
+Trigger for constraint orders_partner_id_fkey: time=0.417 calls=1
+Trigger orders_coupon_min_order_trigger: time=0.584 calls=1
+Execution Time: 3.234 ms
+=== W02 run 3 ===
+Update on orders  (cost=2.20..10.21 rows=0 width=0) (actual time=1.992..1.993 rows=0.00 loops=1)
+  Buffers: shared hit=132
+  InitPlan 1
+    ->  Limit  (cost=0.14..1.78 rows=1 width=12) (actual time=0.015..0.016 rows=1.00 loops=1)
+          Buffers: shared hit=2
+          ->  Index Scan using orders_unassigned_placed_idx on orders orders_1  (cost=0.14..8.32 rows=5 width=12) (actual time=0.015..0.015 rows=1.00 loops=1)
+                Filter: ((status)::text = 'ACCEPTED'::text)
+                Rows Removed by Filter: 1
+                Index Searches: 1
+                Buffers: shared hit=2
+  ->  Index Scan using orders_pkey on orders  (cost=0.42..8.44 rows=1 width=78) (actual time=0.030..0.032 rows=1.00 loops=1)
+        Index Cond: (order_id = (InitPlan 1).col1)
+        Index Searches: 1
+        Buffers: shared hit=8
+Planning:
+  Buffers: shared hit=292
+Planning Time: 1.012 ms
+Trigger for constraint orders_partner_id_fkey: time=0.278 calls=1
+Trigger orders_coupon_min_order_trigger: time=0.239 calls=1
+Execution Time: 2.349 ms

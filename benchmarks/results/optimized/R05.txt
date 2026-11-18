@@ -1,0 +1,27 @@
+=== R05 run 1 ===
+Index Scan using orders_preparing_accepted_idx on orders  (cost=0.14..12.86 rows=41 width=16) (actual time=0.070..0.089 rows=35.00 loops=1)
+  Index Cond: (accepted_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:40:00'::interval))
+  Index Searches: 1
+  Buffers: shared hit=6
+Planning:
+  Buffers: shared hit=244
+Planning Time: 1.062 ms
+Execution Time: 0.124 ms
+=== R05 run 2 ===
+Index Scan using orders_preparing_accepted_idx on orders  (cost=0.14..12.86 rows=41 width=16) (actual time=0.009..0.020 rows=35.00 loops=1)
+  Index Cond: (accepted_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:40:00'::interval))
+  Index Searches: 1
+  Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=244
+Planning Time: 0.634 ms
+Execution Time: 0.033 ms
+=== R05 run 3 ===
+Index Scan using orders_preparing_accepted_idx on orders  (cost=0.14..12.86 rows=41 width=16) (actual time=0.025..0.036 rows=35.00 loops=1)
+  Index Cond: (accepted_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:40:00'::interval))
+  Index Searches: 1
+  Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=244
+Planning Time: 0.690 ms
+Execution Time: 0.065 ms
