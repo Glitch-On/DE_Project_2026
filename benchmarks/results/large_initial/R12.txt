@@ -1,0 +1,30 @@
+=== R12 run 1 ===
+Limit  (cost=0.28..4.63 rows=50 width=27) (actual time=0.018..0.024 rows=50.00 loops=1)
+  Buffers: shared hit=2 read=2
+  ->  Index Scan using orders_unassigned_placed_idx on orders o  (cost=0.28..11.15 rows=125 width=27) (actual time=0.017..0.022 rows=50.00 loops=1)
+        Index Searches: 1
+        Buffers: shared hit=2 read=2
+Planning:
+  Buffers: shared hit=292
+Planning Time: 0.396 ms
+Execution Time: 0.032 ms
+=== R12 run 2 ===
+Limit  (cost=0.28..4.63 rows=50 width=27) (actual time=0.007..0.013 rows=50.00 loops=1)
+  Buffers: shared hit=4
+  ->  Index Scan using orders_unassigned_placed_idx on orders o  (cost=0.28..11.15 rows=125 width=27) (actual time=0.006..0.011 rows=50.00 loops=1)
+        Index Searches: 1
+        Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=292
+Planning Time: 0.368 ms
+Execution Time: 0.021 ms
+=== R12 run 3 ===
+Limit  (cost=0.28..4.63 rows=50 width=27) (actual time=0.006..0.012 rows=50.00 loops=1)
+  Buffers: shared hit=4
+  ->  Index Scan using orders_unassigned_placed_idx on orders o  (cost=0.28..11.15 rows=125 width=27) (actual time=0.006..0.010 rows=50.00 loops=1)
+        Index Searches: 1
+        Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=292
+Planning Time: 0.369 ms
+Execution Time: 0.021 ms

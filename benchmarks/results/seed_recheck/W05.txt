@@ -1,0 +1,45 @@
+=== W05 run 1 ===
+Update on customers  (cost=5.72..297.49 rows=0 width=0) (actual time=28.073..28.073 rows=0.00 loops=1)
+  Buffers: shared hit=17386 read=353 dirtied=709 written=392
+  ->  Bitmap Heap Scan on customers  (cost=5.72..297.49 rows=186 width=7) (actual time=0.053..0.438 rows=1230.00 loops=1)
+        Recheck Cond: ((gold_expires_on < '2026-07-01'::date) AND is_gold_member)
+        Heap Blocks: exact=321
+        Buffers: shared hit=324
+        ->  Bitmap Index Scan on customers_gold_expiry_idx  (cost=0.00..5.67 rows=186 width=0) (actual time=0.035..0.035 rows=1230.00 loops=1)
+              Index Cond: (gold_expires_on < '2026-07-01'::date)
+              Index Searches: 1
+              Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=115
+Planning Time: 0.219 ms
+Execution Time: 28.120 ms
+=== W05 run 2 ===
+Update on customers  (cost=5.80..312.79 rows=0 width=0) (actual time=10.674..10.674 rows=0.00 loops=1)
+  Buffers: shared hit=21264 dirtied=19 written=20
+  ->  Bitmap Heap Scan on customers  (cost=5.80..312.79 rows=196 width=7) (actual time=0.054..0.597 rows=1230.00 loops=1)
+        Recheck Cond: ((gold_expires_on < '2026-07-01'::date) AND is_gold_member)
+        Heap Blocks: exact=321
+        Buffers: shared hit=324
+        ->  Bitmap Index Scan on customers_gold_expiry_idx  (cost=0.00..5.75 rows=196 width=0) (actual time=0.035..0.035 rows=1230.00 loops=1)
+              Index Cond: (gold_expires_on < '2026-07-01'::date)
+              Index Searches: 1
+              Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=115
+Planning Time: 0.208 ms
+Execution Time: 10.717 ms
+=== W05 run 3 ===
+Update on customers  (cost=5.87..327.09 rows=0 width=0) (actual time=8.485..8.485 rows=0.00 loops=1)
+  Buffers: shared hit=21297 dirtied=16 written=16
+  ->  Bitmap Heap Scan on customers  (cost=5.87..327.09 rows=205 width=7) (actual time=0.051..0.613 rows=1230.00 loops=1)
+        Recheck Cond: ((gold_expires_on < '2026-07-01'::date) AND is_gold_member)
+        Heap Blocks: exact=321
+        Buffers: shared hit=324
+        ->  Bitmap Index Scan on customers_gold_expiry_idx  (cost=0.00..5.82 rows=205 width=0) (actual time=0.032..0.032 rows=1230.00 loops=1)
+              Index Cond: (gold_expires_on < '2026-07-01'::date)
+              Index Searches: 1
+              Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=115
+Planning Time: 0.206 ms
+Execution Time: 8.534 ms

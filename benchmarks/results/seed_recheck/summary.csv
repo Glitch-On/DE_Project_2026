@@ -1,0 +1,31 @@
+query_id,type,avg_ms,median_ms,min_ms,max_ms,scan_nodes
+R01,READ,0.186,0.104,0.102,0.351,Seq Scan on localities | Bitmap Heap Scan on restaurants | Bitmap Index Scan on restaurants_locality_status_rating_idx
+R02,READ,5.460,4.945,4.637,6.797,Seq Scan on restaurants | Seq Scan on localities | Index Scan using menu_items_restaurant_item_key on menu_items
+R03,READ,0.062,0.062,0.060,0.064,Index Scan using menu_items_restaurant_item_key on menu_items
+R04,READ,0.198,0.084,0.081,0.429,Bitmap Heap Scan on orders | Bitmap Index Scan on orders_customer_placed_idx | Index Scan using restaurants_pkey on restaurants
+R05,READ,0.025,0.026,0.021,0.029,Index Scan using orders_preparing_accepted_idx on orders
+R06,READ,0.081,0.016,0.015,0.212,Index Scan using orders_restaurant_placed_idx on orders
+R07,READ,0.175,0.079,0.072,0.374,Bitmap Heap Scan on orders | Bitmap Index Scan on orders_restaurant_placed_idx | Index Scan using order_items_pkey on order_items | Index Scan using menu_items_pkey on menu_items
+R08,READ,2.295,2.039,2.024,2.822,Index Only Scan using orders_placed_at_idx on orders | Seq Scan on restaurants | Seq Scan on localities | Index Scan using order_items_pkey on order_items
+R09,READ,0.059,0.050,0.049,0.078,Seq Scan on mv_city_month_delivery
+R10,READ,0.709,0.693,0.692,0.742,Index Only Scan using orders_placed_at_idx on orders
+R11,READ,0.180,0.030,0.029,0.480,Index Scan using orders_partner_placed_idx on orders
+R12,READ,0.025,0.021,0.021,0.032,Index Scan using orders_unassigned_placed_idx on orders
+R13,READ,0.291,0.267,0.254,0.351,Index Only Scan using orders_placed_at_idx on orders | Seq Scan on delivery_partners
+R14,READ,1.320,1.127,1.114,1.718,Index Only Scan using orders_placed_at_idx on orders | Bitmap Heap Scan on customers | Bitmap Index Scan on customers_gold_expiry_idx
+R15,READ,2.841,2.477,2.460,3.587,Seq Scan on coupons | Index Only Scan using orders_delivered_coupon_idx on orders
+R16,READ,0.181,0.067,0.064,0.413,Index Only Scan using payments_failed_attempted_idx on payments
+R17,READ,14.409,12.444,11.735,19.047,Seq Scan on orders | Index Only Scan using payments_failed_attempted_idx on payments
+R18,READ,0.328,0.250,0.240,0.493,Index Scan using reviews_created_at_idx on reviews
+R19,READ,9.058,4.050,3.991,19.132,Seq Scan on restaurants | Seq Scan on localities | Index Only Scan using orders_restaurant_placed_idx on orders | Index Only Scan using reviews_restaurant_idx on reviews
+R20,READ,9.833,7.460,7.379,14.660,Seq Scan on customers | Index Only Scan using orders_customer_placed_idx on orders
+R21,READ,4.450,4.459,4.355,4.536,Seq Scan on customers | Index Only Scan using orders_placed_at_idx on orders
+R22,READ,2.258,2.244,2.242,2.289,Seq Scan on restaurants | Seq Scan on localities | Index Only Scan using orders_restaurant_placed_idx on orders
+R23,READ,0.029,0.027,0.024,0.037,Index Scan using orders_placed_at_idx on orders
+R24,READ,0.285,0.058,0.057,0.740,Index Scan using orders_pkey on orders | Index Scan using restaurants_pkey on restaurants | Index Scan using payments_order_id_idx on payments | Index Scan using order_items_pkey on order_items | Index Scan using menu_items_pkey on menu_items
+R25,READ,0.315,0.311,0.302,0.331,Seq Scan on restaurants | Seq Scan on localities
+W01,WRITE,1.697,1.294,1.250,2.546,(no scan)
+W02,WRITE,1.074,0.891,0.872,1.460,Index Scan using orders_unassigned_placed_idx on orders | Index Scan using orders_pkey on orders
+W03,WRITE,0.298,0.193,0.182,0.518,Index Scan using menu_items_restaurant_item_key on menu_items
+W04,WRITE,17.923,16.613,16.533,20.623,Seq Scan on restaurants | Seq Scan on reviews
+W05,WRITE,15.790,10.717,8.534,28.120,Bitmap Heap Scan on customers | Bitmap Index Scan on customers_gold_expiry_idx

@@ -1,0 +1,33 @@
+=== R23 run 1 ===
+Limit  (cost=0.43..2.09 rows=25 width=36) (actual time=0.016..0.027 rows=25.00 loops=1)
+  Buffers: shared hit=1 read=5
+  ->  Index Scan Backward using orders_placed_at_idx on orders  (cost=0.43..192477.28 rows=2902963 width=36) (actual time=0.016..0.025 rows=25.00 loops=1)
+        Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+        Index Searches: 1
+        Buffers: shared hit=1 read=5
+Planning:
+  Buffers: shared hit=251 read=1
+Planning Time: 0.436 ms
+Execution Time: 0.039 ms
+=== R23 run 2 ===
+Limit  (cost=0.43..2.09 rows=25 width=36) (actual time=0.008..0.015 rows=25.00 loops=1)
+  Buffers: shared hit=6
+  ->  Index Scan Backward using orders_placed_at_idx on orders  (cost=0.43..192477.28 rows=2902963 width=36) (actual time=0.008..0.014 rows=25.00 loops=1)
+        Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+        Index Searches: 1
+        Buffers: shared hit=6
+Planning:
+  Buffers: shared hit=252
+Planning Time: 0.395 ms
+Execution Time: 0.027 ms
+=== R23 run 3 ===
+Limit  (cost=0.43..2.09 rows=25 width=36) (actual time=0.008..0.015 rows=25.00 loops=1)
+  Buffers: shared hit=6
+  ->  Index Scan Backward using orders_placed_at_idx on orders  (cost=0.43..192477.28 rows=2902963 width=36) (actual time=0.008..0.013 rows=25.00 loops=1)
+        Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+        Index Searches: 1
+        Buffers: shared hit=6
+Planning:
+  Buffers: shared hit=252
+Planning Time: 0.407 ms
+Execution Time: 0.026 ms

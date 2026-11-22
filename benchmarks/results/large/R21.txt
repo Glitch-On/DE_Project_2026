@@ -1,0 +1,135 @@
+=== R21 run 1 ===
+Finalize GroupAggregate  (cost=29461.37..29464.57 rows=10 width=52) (actual time=98.596..100.484 rows=10.00 loops=1)
+  Group Key: c.city_id
+  Buffers: shared hit=4694 read=7473, temp read=2070 written=2553
+  ->  Gather Merge  (cost=29461.37..29464.17 rows=24 width=20) (actual time=98.582..100.466 rows=30.00 loops=1)
+        Workers Planned: 2
+        Workers Launched: 2
+        Buffers: shared hit=4694 read=7473, temp read=2070 written=2553
+        ->  Sort  (cost=28461.35..28461.37 rows=10 width=20) (actual time=96.596..96.597 rows=10.00 loops=3)
+              Sort Key: c.city_id
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=4694 read=7473, temp read=2070 written=2553
+              Worker 0:  Sort Method: quicksort  Memory: 25kB
+              Worker 1:  Sort Method: quicksort  Memory: 25kB
+              ->  Partial HashAggregate  (cost=28461.08..28461.18 rows=10 width=20) (actual time=96.585..96.587 rows=10.00 loops=3)
+                    Group Key: c.city_id
+                    Batches: 1  Memory Usage: 32kB
+                    Buffers: shared hit=4680 read=7473, temp read=2070 written=2553
+                    Worker 0:  Batches: 1  Memory Usage: 32kB
+                    Worker 1:  Batches: 1  Memory Usage: 32kB
+                    ->  Hash Join  (cost=15118.67..27869.88 rows=59120 width=12) (actual time=60.157..93.479 rows=48104.67 loops=3)
+                          Hash Cond: (c.customer_id = may.customer_id)
+                          Buffers: shared hit=4680 read=7473, temp read=2070 written=2553
+                          ->  Parallel Seq Scan on customers c  (cost=0.00..9883.33 rows=208333 width=8) (actual time=0.026..9.315 rows=166666.67 loops=3)
+                                Buffers: shared hit=1755 read=6045
+                          ->  Hash  (cost=12652.06..12652.06 rows=141889 width=12) (actual time=59.981..59.982 rows=144314.00 loops=3)
+                                Buckets: 262144  Batches: 2  Memory Usage: 5153kB
+                                Buffers: shared hit=2861 read=1428, temp read=369 written=1695
+                                ->  Subquery Scan on may  (cost=9814.28..12652.06 rows=141889 width=12) (actual time=31.101..50.052 rows=144314.00 loops=3)
+                                      Buffers: shared hit=2861 read=1428, temp read=369 written=852
+                                      ->  HashAggregate  (cost=9814.28..11233.17 rows=141889 width=12) (actual time=31.100..44.828 rows=144314.00 loops=3)
+                                            Group Key: orders.customer_id
+                                            Batches: 5  Memory Usage: 8505kB  Disk Usage: 1584kB
+                                            Buffers: shared hit=2861 read=1428, temp read=369 written=852
+                                            Worker 0:  Batches: 5  Memory Usage: 8505kB  Disk Usage: 1584kB
+                                            Worker 1:  Batches: 5  Memory Usage: 8505kB  Disk Usage: 1584kB
+                                            ->  Index Only Scan using orders_placed_at_idx on orders  (cost=0.43..8977.11 rows=167434 width=4) (actual time=0.032..9.808 rows=170329.00 loops=3)
+                                                  Index Cond: ((placed_at >= '2026-05-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-06-01 00:00:00+05:30'::timestamp with time zone))
+                                                  Heap Fetches: 0
+                                                  Index Searches: 3
+                                                  Buffers: shared hit=2861 read=1428
+Planning:
+  Buffers: shared hit=316 read=47
+Planning Time: 0.823 ms
+Execution Time: 100.993 ms
+=== R21 run 2 ===
+Finalize GroupAggregate  (cost=29461.37..29464.57 rows=10 width=52) (actual time=92.931..94.130 rows=10.00 loops=1)
+  Group Key: c.city_id
+  Buffers: shared hit=6404 read=5763, temp read=2070 written=2553
+  ->  Gather Merge  (cost=29461.37..29464.17 rows=24 width=20) (actual time=92.920..94.116 rows=30.00 loops=1)
+        Workers Planned: 2
+        Workers Launched: 2
+        Buffers: shared hit=6404 read=5763, temp read=2070 written=2553
+        ->  Sort  (cost=28461.35..28461.37 rows=10 width=20) (actual time=90.829..90.831 rows=10.00 loops=3)
+              Sort Key: c.city_id
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=6404 read=5763, temp read=2070 written=2553
+              Worker 0:  Sort Method: quicksort  Memory: 25kB
+              Worker 1:  Sort Method: quicksort  Memory: 25kB
+              ->  Partial HashAggregate  (cost=28461.08..28461.18 rows=10 width=20) (actual time=90.820..90.822 rows=10.00 loops=3)
+                    Group Key: c.city_id
+                    Batches: 1  Memory Usage: 32kB
+                    Buffers: shared hit=6390 read=5763, temp read=2070 written=2553
+                    Worker 0:  Batches: 1  Memory Usage: 32kB
+                    Worker 1:  Batches: 1  Memory Usage: 32kB
+                    ->  Hash Join  (cost=15118.67..27869.88 rows=59120 width=12) (actual time=55.734..87.743 rows=48104.67 loops=3)
+                          Hash Cond: (c.customer_id = may.customer_id)
+                          Buffers: shared hit=6390 read=5763, temp read=2070 written=2553
+                          ->  Parallel Seq Scan on customers c  (cost=0.00..9883.33 rows=208333 width=8) (actual time=0.034..9.179 rows=166666.67 loops=3)
+                                Buffers: shared hit=2037 read=5763
+                          ->  Hash  (cost=12652.06..12652.06 rows=141889 width=12) (actual time=55.543..55.544 rows=144314.00 loops=3)
+                                Buckets: 262144  Batches: 2  Memory Usage: 5153kB
+                                Buffers: shared hit=4289, temp read=369 written=1695
+                                ->  Subquery Scan on may  (cost=9814.28..12652.06 rows=141889 width=12) (actual time=27.606..46.065 rows=144314.00 loops=3)
+                                      Buffers: shared hit=4289, temp read=369 written=852
+                                      ->  HashAggregate  (cost=9814.28..11233.17 rows=141889 width=12) (actual time=27.605..40.818 rows=144314.00 loops=3)
+                                            Group Key: orders.customer_id
+                                            Batches: 5  Memory Usage: 8505kB  Disk Usage: 1584kB
+                                            Buffers: shared hit=4289, temp read=369 written=852
+                                            Worker 0:  Batches: 5  Memory Usage: 8505kB  Disk Usage: 1584kB
+                                            Worker 1:  Batches: 5  Memory Usage: 8505kB  Disk Usage: 1584kB
+                                            ->  Index Only Scan using orders_placed_at_idx on orders  (cost=0.43..8977.11 rows=167434 width=4) (actual time=0.030..8.195 rows=170329.00 loops=3)
+                                                  Index Cond: ((placed_at >= '2026-05-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-06-01 00:00:00+05:30'::timestamp with time zone))
+                                                  Heap Fetches: 0
+                                                  Index Searches: 3
+                                                  Buffers: shared hit=4289
+Planning:
+  Buffers: shared hit=363
+Planning Time: 0.544 ms
+Execution Time: 94.603 ms
+=== R21 run 3 ===
+Finalize GroupAggregate  (cost=29461.37..29464.57 rows=10 width=52) (actual time=93.101..93.714 rows=10.00 loops=1)
+  Group Key: c.city_id
+  Buffers: shared hit=6686 read=5481, temp read=2070 written=2553
+  ->  Gather Merge  (cost=29461.37..29464.17 rows=24 width=20) (actual time=93.089..93.699 rows=30.00 loops=1)
+        Workers Planned: 2
+        Workers Launched: 2
+        Buffers: shared hit=6686 read=5481, temp read=2070 written=2553
+        ->  Sort  (cost=28461.35..28461.37 rows=10 width=20) (actual time=90.837..90.838 rows=10.00 loops=3)
+              Sort Key: c.city_id
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=6686 read=5481, temp read=2070 written=2553
+              Worker 0:  Sort Method: quicksort  Memory: 25kB
+              Worker 1:  Sort Method: quicksort  Memory: 25kB
+              ->  Partial HashAggregate  (cost=28461.08..28461.18 rows=10 width=20) (actual time=90.827..90.829 rows=10.00 loops=3)
+                    Group Key: c.city_id
+                    Batches: 1  Memory Usage: 32kB
+                    Buffers: shared hit=6672 read=5481, temp read=2070 written=2553
+                    Worker 0:  Batches: 1  Memory Usage: 32kB
+                    Worker 1:  Batches: 1  Memory Usage: 32kB
+                    ->  Hash Join  (cost=15118.67..27869.88 rows=59120 width=12) (actual time=55.328..87.724 rows=48104.67 loops=3)
+                          Hash Cond: (c.customer_id = may.customer_id)
+                          Buffers: shared hit=6672 read=5481, temp read=2070 written=2553
+                          ->  Parallel Seq Scan on customers c  (cost=0.00..9883.33 rows=208333 width=8) (actual time=0.033..9.153 rows=166666.67 loops=3)
+                                Buffers: shared hit=2319 read=5481
+                          ->  Hash  (cost=12652.06..12652.06 rows=141889 width=12) (actual time=55.148..55.149 rows=144314.00 loops=3)
+                                Buckets: 262144  Batches: 2  Memory Usage: 5153kB
+                                Buffers: shared hit=4289, temp read=369 written=1695
+                                ->  Subquery Scan on may  (cost=9814.28..12652.06 rows=141889 width=12) (actual time=27.061..45.656 rows=144314.00 loops=3)
+                                      Buffers: shared hit=4289, temp read=369 written=852
+                                      ->  HashAggregate  (cost=9814.28..11233.17 rows=141889 width=12) (actual time=27.060..40.418 rows=144314.00 loops=3)
+                                            Group Key: orders.customer_id
+                                            Batches: 5  Memory Usage: 8505kB  Disk Usage: 1584kB
+                                            Buffers: shared hit=4289, temp read=369 written=852
+                                            Worker 0:  Batches: 5  Memory Usage: 8505kB  Disk Usage: 1584kB
+                                            Worker 1:  Batches: 5  Memory Usage: 8505kB  Disk Usage: 1584kB
+                                            ->  Index Only Scan using orders_placed_at_idx on orders  (cost=0.43..8977.11 rows=167434 width=4) (actual time=0.028..8.187 rows=170329.00 loops=3)
+                                                  Index Cond: ((placed_at >= '2026-05-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-06-01 00:00:00+05:30'::timestamp with time zone))
+                                                  Heap Fetches: 0
+                                                  Index Searches: 3
+                                                  Buffers: shared hit=4289
+Planning:
+  Buffers: shared hit=363
+Planning Time: 0.532 ms
+Execution Time: 94.214 ms

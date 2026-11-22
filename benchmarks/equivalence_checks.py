@@ -20,7 +20,11 @@ psql runs with -q -A -t and SETs are sent as their own statement so their
 Writes run inside BEGIN ... ROLLBACK so the data is identical for every run.
 
 Usage:
-    python3 benchmarks/equivalence_checks.py <db>
+    python3 benchmarks/equivalence_checks.py <db> [new_workload.sql]
+
+Phase 5: pass sql/06_optimized_queries_large.sql as the second argument to
+check the large-data workload against the original queries on the large
+database (with 05_indexes.sql and 07_scale_fixes.sql applied).
 
 Exit code 0 when every pair passes (R13 excepted, reported as FIXED).
 """
@@ -88,9 +92,10 @@ def fetch(db, prefix, qid, sql):
 def main():
     db = sys.argv[1] if len(sys.argv) > 1 else None
     if not db:
-        sys.exit("usage: equivalence_checks.py <db>")
+        sys.exit("usage: equivalence_checks.py <db> [new_workload.sql]")
+    new_path = sys.argv[2] if len(sys.argv) > 2 else NEW
 
-    old, new = split(OLD), split(NEW)
+    old, new = split(OLD), split(new_path)
     ids = sorted((i for i in old if i in new), key=lambda x: (x[0], int(x[1:])))
 
     print(f"{'pair':6} {'old':>6} {'new':>6}  {'mode':8}  verdict")

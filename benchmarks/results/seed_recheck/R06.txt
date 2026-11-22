@@ -1,0 +1,27 @@
+=== R06 run 1 ===
+Index Scan using orders_restaurant_placed_idx on orders  (cost=0.42..8.44 rows=1 width=28) (actual time=0.203..0.203 rows=1.00 loops=1)
+  Index Cond: ((restaurant_id = 217) AND (placed_at >= '2026-06-15 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-06-16 00:00:00+05:30'::timestamp with time zone))
+  Index Searches: 1
+  Buffers: shared hit=2 read=2
+Planning:
+  Buffers: shared hit=254 read=1
+Planning Time: 0.430 ms
+Execution Time: 0.212 ms
+=== R06 run 2 ===
+Index Scan using orders_restaurant_placed_idx on orders  (cost=0.42..8.44 rows=1 width=28) (actual time=0.007..0.007 rows=1.00 loops=1)
+  Index Cond: ((restaurant_id = 217) AND (placed_at >= '2026-06-15 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-06-16 00:00:00+05:30'::timestamp with time zone))
+  Index Searches: 1
+  Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=255
+Planning Time: 0.381 ms
+Execution Time: 0.016 ms
+=== R06 run 3 ===
+Index Scan using orders_restaurant_placed_idx on orders  (cost=0.42..8.44 rows=1 width=28) (actual time=0.007..0.007 rows=1.00 loops=1)
+  Index Cond: ((restaurant_id = 217) AND (placed_at >= '2026-06-15 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-06-16 00:00:00+05:30'::timestamp with time zone))
+  Index Searches: 1
+  Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=255
+Planning Time: 0.351 ms
+Execution Time: 0.015 ms

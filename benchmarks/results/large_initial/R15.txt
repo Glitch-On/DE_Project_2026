@@ -1,0 +1,66 @@
+=== R15 run 1 ===
+Sort  (cost=32421.30..32421.37 rows=30 width=85) (actual time=50.790..50.792 rows=30.00 loops=1)
+  Sort Key: (count(o.order_id)) DESC
+  Sort Method: quicksort  Memory: 26kB
+  Buffers: shared hit=64 read=2036
+  ->  GroupAggregate  (cost=0.56..32420.56 rows=30 width=85) (actual time=1.337..50.780 rows=30.00 loops=1)
+        Group Key: c.coupon_code
+        Buffers: shared hit=61 read=2036
+        ->  Merge Left Join  (cost=0.56..6347.49 rows=2607255 width=25) (actual time=0.238..32.147 rows=355008.00 loops=1)
+              Merge Cond: ((c.coupon_code)::text = (o.coupon_code)::text)
+              Buffers: shared hit=61 read=2036
+              ->  Index Scan using coupons_pkey on coupons c  (cost=0.14..12.59 rows=30 width=13) (actual time=0.006..0.010 rows=30.00 loops=1)
+                    Index Searches: 1
+                    Buffers: shared hit=1 read=1
+              ->  Index Only Scan using orders_delivered_coupon_idx on orders o  (cost=0.42..13545.22 rows=2607255 width=21) (actual time=0.036..15.569 rows=355008.00 loops=1)
+                    Heap Fetches: 0
+                    Index Searches: 1
+                    Buffers: shared hit=60 read=2035
+Planning:
+  Buffers: shared hit=400 read=3
+Planning Time: 0.521 ms
+Execution Time: 50.819 ms
+=== R15 run 2 ===
+Sort  (cost=32421.30..32421.37 rows=30 width=85) (actual time=48.002..48.003 rows=30.00 loops=1)
+  Sort Key: (count(o.order_id)) DESC
+  Sort Method: quicksort  Memory: 26kB
+  Buffers: shared hit=2100
+  ->  GroupAggregate  (cost=0.56..32420.56 rows=30 width=85) (actual time=1.089..47.993 rows=30.00 loops=1)
+        Group Key: c.coupon_code
+        Buffers: shared hit=2097
+        ->  Merge Left Join  (cost=0.56..6347.49 rows=2607255 width=25) (actual time=0.028..29.107 rows=355008.00 loops=1)
+              Merge Cond: ((c.coupon_code)::text = (o.coupon_code)::text)
+              Buffers: shared hit=2097
+              ->  Index Scan using coupons_pkey on coupons c  (cost=0.14..12.59 rows=30 width=13) (actual time=0.002..0.005 rows=30.00 loops=1)
+                    Index Searches: 1
+                    Buffers: shared hit=2
+              ->  Index Only Scan using orders_delivered_coupon_idx on orders o  (cost=0.42..13545.22 rows=2607255 width=21) (actual time=0.023..12.889 rows=355008.00 loops=1)
+                    Heap Fetches: 0
+                    Index Searches: 1
+                    Buffers: shared hit=2095
+Planning:
+  Buffers: shared hit=403
+Planning Time: 0.494 ms
+Execution Time: 48.028 ms
+=== R15 run 3 ===
+Sort  (cost=32421.30..32421.37 rows=30 width=85) (actual time=47.706..47.707 rows=30.00 loops=1)
+  Sort Key: (count(o.order_id)) DESC
+  Sort Method: quicksort  Memory: 26kB
+  Buffers: shared hit=2100
+  ->  GroupAggregate  (cost=0.56..32420.56 rows=30 width=85) (actual time=1.096..47.697 rows=30.00 loops=1)
+        Group Key: c.coupon_code
+        Buffers: shared hit=2097
+        ->  Merge Left Join  (cost=0.56..6347.49 rows=2607255 width=25) (actual time=0.029..29.132 rows=355008.00 loops=1)
+              Merge Cond: ((c.coupon_code)::text = (o.coupon_code)::text)
+              Buffers: shared hit=2097
+              ->  Index Scan using coupons_pkey on coupons c  (cost=0.14..12.59 rows=30 width=13) (actual time=0.002..0.005 rows=30.00 loops=1)
+                    Index Searches: 1
+                    Buffers: shared hit=2
+              ->  Index Only Scan using orders_delivered_coupon_idx on orders o  (cost=0.42..13545.22 rows=2607255 width=21) (actual time=0.024..12.956 rows=355008.00 loops=1)
+                    Heap Fetches: 0
+                    Index Searches: 1
+                    Buffers: shared hit=2095
+Planning:
+  Buffers: shared hit=403
+Planning Time: 0.520 ms
+Execution Time: 47.733 ms

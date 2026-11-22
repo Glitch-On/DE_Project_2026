@@ -1,0 +1,54 @@
+=== R16 run 1 ===
+Sort  (cost=65.10..65.11 rows=4 width=12) (actual time=0.215..0.215 rows=3.00 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=3 read=12
+  ->  HashAggregate  (cost=65.02..65.06 rows=4 width=12) (actual time=0.208..0.208 rows=3.00 loops=1)
+        Group Key: method
+        Batches: 1  Memory Usage: 32kB
+        Buffers: shared read=12
+        ->  Index Only Scan using payments_failed_attempted_idx on payments  (cost=0.42..57.78 rows=1449 width=4) (actual time=0.036..0.113 rows=1689.00 loops=1)
+              Index Cond: (attempted_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone)
+              Heap Fetches: 0
+              Index Searches: 1
+              Buffers: shared read=12
+Planning:
+  Buffers: shared hit=161 read=3
+Planning Time: 0.277 ms
+Execution Time: 0.243 ms
+=== R16 run 2 ===
+Sort  (cost=65.10..65.11 rows=4 width=12) (actual time=0.196..0.196 rows=3.00 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=15
+  ->  HashAggregate  (cost=65.02..65.06 rows=4 width=12) (actual time=0.189..0.189 rows=3.00 loops=1)
+        Group Key: method
+        Batches: 1  Memory Usage: 32kB
+        Buffers: shared hit=12
+        ->  Index Only Scan using payments_failed_attempted_idx on payments  (cost=0.42..57.78 rows=1449 width=4) (actual time=0.024..0.093 rows=1689.00 loops=1)
+              Index Cond: (attempted_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone)
+              Heap Fetches: 0
+              Index Searches: 1
+              Buffers: shared hit=12
+Planning:
+  Buffers: shared hit=164
+Planning Time: 0.239 ms
+Execution Time: 0.225 ms
+=== R16 run 3 ===
+Sort  (cost=65.10..65.11 rows=4 width=12) (actual time=0.196..0.196 rows=3.00 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=15
+  ->  HashAggregate  (cost=65.02..65.06 rows=4 width=12) (actual time=0.189..0.189 rows=3.00 loops=1)
+        Group Key: method
+        Batches: 1  Memory Usage: 32kB
+        Buffers: shared hit=12
+        ->  Index Only Scan using payments_failed_attempted_idx on payments  (cost=0.42..57.78 rows=1449 width=4) (actual time=0.025..0.093 rows=1689.00 loops=1)
+              Index Cond: (attempted_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone)
+              Heap Fetches: 0
+              Index Searches: 1
+              Buffers: shared hit=12
+Planning:
+  Buffers: shared hit=164
+Planning Time: 0.232 ms
+Execution Time: 0.222 ms

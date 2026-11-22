@@ -1,0 +1,36 @@
+pair      old    new  mode      verdict
+R01        20     20  ordered   SAME
+R02        50     50  ordered   SAME
+R03        19     19  ordered   SAME
+R04         3      3  ordered   SAME
+R05       709    709  ordered   SAME
+R06         0      0  ordered   SAME
+R07        10     10  ordered   SAME
+R08     12726  12726  ordered   DIFFERS (same rows, different order)
+R09        60     60  ordered   SAME
+R10       100    100  ordered   DIFFERS (same rows, different order)
+R11         1      1  multiset  SAME
+R12        50     50  ordered   SAME
+R13         0   2712  multiset  FIXED (old 0 -> new 2712 rows)
+R14      6885   6885  multiset  SAME
+R15        30     30  ordered   SAME
+R16         3      3  ordered   SAME
+R17     16816  16816  ordered   SAME
+R18        50     50  ordered   SAME
+R19      8000   8000  ordered   SAME
+R20        20     20  ordered   SAME
+R21        10     10  ordered   SAME
+R22       168    168  ordered   SAME
+R23        25     25  multiset  SAME
+R24         4      4  multiset  SAME
+R25      1197   1197  ordered   SAME
+W01         0      0  multiset  SAME
+W02         0      0  ordered   SAME
+W03         0      0  multiset  SAME
+W04         0      0  multiset  SAME
+W05         0      0  multiset  SAME
+
+Intentionally changed: R13
+FAILED: R08, R10
+R08: rows=12726  same_rows=True  same_order_by_key_sequence=True  tied_rows_moved old->new=1952  new->new_rerun=1876
+R10: rows=100  same_rows=True  same_order_by_key_sequence=True  tied_rows_moved old->new=29  new->new_rerun=32

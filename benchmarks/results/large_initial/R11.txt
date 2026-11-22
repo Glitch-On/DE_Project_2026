@@ -1,0 +1,36 @@
+=== R11 run 1 ===
+Aggregate  (cost=8.46..8.47 rows=1 width=40) (actual time=0.020..0.020 rows=1.00 loops=1)
+  Buffers: shared read=4
+  ->  Index Scan using orders_partner_placed_idx on orders  (cost=0.43..8.45 rows=1 width=4) (actual time=0.014..0.014 rows=1.00 loops=1)
+        Index Cond: ((partner_id = 150) AND (placed_at >= '2026-06-22 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-06-29 00:00:00+05:30'::timestamp with time zone))
+        Filter: ((status)::text = 'DELIVERED'::text)
+        Index Searches: 1
+        Buffers: shared read=4
+Planning:
+  Buffers: shared hit=278 read=1
+Planning Time: 0.419 ms
+Execution Time: 0.037 ms
+=== R11 run 2 ===
+Aggregate  (cost=8.46..8.47 rows=1 width=40) (actual time=0.013..0.014 rows=1.00 loops=1)
+  Buffers: shared hit=4
+  ->  Index Scan using orders_partner_placed_idx on orders  (cost=0.43..8.45 rows=1 width=4) (actual time=0.007..0.007 rows=1.00 loops=1)
+        Index Cond: ((partner_id = 150) AND (placed_at >= '2026-06-22 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-06-29 00:00:00+05:30'::timestamp with time zone))
+        Filter: ((status)::text = 'DELIVERED'::text)
+        Index Searches: 1
+        Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=279
+Planning Time: 0.393 ms
+Execution Time: 0.030 ms
+=== R11 run 3 ===
+Aggregate  (cost=8.46..8.47 rows=1 width=40) (actual time=0.011..0.012 rows=1.00 loops=1)
+  Buffers: shared hit=4
+  ->  Index Scan using orders_partner_placed_idx on orders  (cost=0.43..8.45 rows=1 width=4) (actual time=0.006..0.006 rows=1.00 loops=1)
+        Index Cond: ((partner_id = 150) AND (placed_at >= '2026-06-22 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-06-29 00:00:00+05:30'::timestamp with time zone))
+        Filter: ((status)::text = 'DELIVERED'::text)
+        Index Searches: 1
+        Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=279
+Planning Time: 0.393 ms
+Execution Time: 0.028 ms

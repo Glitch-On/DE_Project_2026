@@ -1,0 +1,93 @@
+=== R02 run 1 ===
+Limit  (cost=11416.29..11416.41 rows=50 width=38) (actual time=104.271..104.275 rows=50.00 loops=1)
+  Buffers: shared hit=29179 read=12668 written=2
+  ->  Sort  (cost=11416.29..11441.12 rows=9931 width=38) (actual time=104.270..104.272 rows=50.00 loops=1)
+        Sort Key: m.price
+        Sort Method: top-N heapsort  Memory: 31kB
+        Buffers: shared hit=29179 read=12668 written=2
+        ->  Nested Loop  (cost=2.80..11086.39 rows=9931 width=38) (actual time=0.049..102.608 rows=15994.00 loops=1)
+              Buffers: shared hit=29176 read=12668 written=2
+              ->  Hash Join  (cost=2.38..1586.19 rows=5000 width=20) (actual time=0.035..6.480 rows=8000.00 loops=1)
+                    Hash Cond: (r.locality_id = l.locality_id)
+                    Buffers: shared hit=517 read=431
+                    ->  Seq Scan on restaurants r  (cost=0.00..1447.00 rows=50000 width=24) (actual time=0.011..2.820 rows=50000.00 loops=1)
+                          Buffers: shared hit=516 read=431
+                    ->  Hash  (cost=2.25..2.25 rows=10 width=4) (actual time=0.011..0.012 rows=10.00 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on localities l  (cost=0.00..2.25 rows=10 width=4) (actual time=0.004..0.007 rows=10.00 loops=1)
+                                Filter: (city_id = 1)
+                                Rows Removed by Filter: 90
+                                Buffers: shared hit=1
+              ->  Index Scan using menu_items_restaurant_item_key on menu_items m  (cost=0.42..1.88 rows=2 width=26) (actual time=0.008..0.012 rows=2.00 loops=8000)
+                    Index Cond: (restaurant_id = r.restaurant_id)
+                    Filter: (is_available AND ((item_name)::text ~~* '%paneer%'::text))
+                    Rows Removed by Filter: 18
+                    Index Searches: 8000
+                    Buffers: shared hit=28659 read=12237 written=2
+Planning:
+  Buffers: shared hit=366 read=10
+Planning Time: 2.102 ms
+Execution Time: 104.320 ms
+=== R02 run 2 ===
+Limit  (cost=11416.29..11416.41 rows=50 width=38) (actual time=73.063..73.067 rows=50.00 loops=1)
+  Buffers: shared hit=41847
+  ->  Sort  (cost=11416.29..11441.12 rows=9931 width=38) (actual time=73.062..73.064 rows=50.00 loops=1)
+        Sort Key: m.price
+        Sort Method: top-N heapsort  Memory: 31kB
+        Buffers: shared hit=41847
+        ->  Nested Loop  (cost=2.80..11086.39 rows=9931 width=38) (actual time=0.024..71.623 rows=15994.00 loops=1)
+              Buffers: shared hit=41844
+              ->  Hash Join  (cost=2.38..1586.19 rows=5000 width=20) (actual time=0.016..4.154 rows=8000.00 loops=1)
+                    Hash Cond: (r.locality_id = l.locality_id)
+                    Buffers: shared hit=948
+                    ->  Seq Scan on restaurants r  (cost=0.00..1447.00 rows=50000 width=24) (actual time=0.003..1.613 rows=50000.00 loops=1)
+                          Buffers: shared hit=947
+                    ->  Hash  (cost=2.25..2.25 rows=10 width=4) (actual time=0.008..0.009 rows=10.00 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on localities l  (cost=0.00..2.25 rows=10 width=4) (actual time=0.003..0.005 rows=10.00 loops=1)
+                                Filter: (city_id = 1)
+                                Rows Removed by Filter: 90
+                                Buffers: shared hit=1
+              ->  Index Scan using menu_items_restaurant_item_key on menu_items m  (cost=0.42..1.88 rows=2 width=26) (actual time=0.004..0.008 rows=2.00 loops=8000)
+                    Index Cond: (restaurant_id = r.restaurant_id)
+                    Filter: (is_available AND ((item_name)::text ~~* '%paneer%'::text))
+                    Rows Removed by Filter: 18
+                    Index Searches: 8000
+                    Buffers: shared hit=40896
+Planning:
+  Buffers: shared hit=376
+Planning Time: 0.598 ms
+Execution Time: 73.096 ms
+=== R02 run 3 ===
+Limit  (cost=11416.29..11416.41 rows=50 width=38) (actual time=70.755..70.758 rows=50.00 loops=1)
+  Buffers: shared hit=41847
+  ->  Sort  (cost=11416.29..11441.12 rows=9931 width=38) (actual time=70.754..70.756 rows=50.00 loops=1)
+        Sort Key: m.price
+        Sort Method: top-N heapsort  Memory: 31kB
+        Buffers: shared hit=41847
+        ->  Nested Loop  (cost=2.80..11086.39 rows=9931 width=38) (actual time=0.026..69.320 rows=15994.00 loops=1)
+              Buffers: shared hit=41844
+              ->  Hash Join  (cost=2.38..1586.19 rows=5000 width=20) (actual time=0.017..4.027 rows=8000.00 loops=1)
+                    Hash Cond: (r.locality_id = l.locality_id)
+                    Buffers: shared hit=948
+                    ->  Seq Scan on restaurants r  (cost=0.00..1447.00 rows=50000 width=24) (actual time=0.003..1.513 rows=50000.00 loops=1)
+                          Buffers: shared hit=947
+                    ->  Hash  (cost=2.25..2.25 rows=10 width=4) (actual time=0.009..0.009 rows=10.00 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on localities l  (cost=0.00..2.25 rows=10 width=4) (actual time=0.003..0.006 rows=10.00 loops=1)
+                                Filter: (city_id = 1)
+                                Rows Removed by Filter: 90
+                                Buffers: shared hit=1
+              ->  Index Scan using menu_items_restaurant_item_key on menu_items m  (cost=0.42..1.88 rows=2 width=26) (actual time=0.004..0.008 rows=2.00 loops=8000)
+                    Index Cond: (restaurant_id = r.restaurant_id)
+                    Filter: (is_available AND ((item_name)::text ~~* '%paneer%'::text))
+                    Rows Removed by Filter: 18
+                    Index Searches: 8000
+                    Buffers: shared hit=40896
+Planning:
+  Buffers: shared hit=376
+Planning Time: 0.808 ms
+Execution Time: 70.790 ms

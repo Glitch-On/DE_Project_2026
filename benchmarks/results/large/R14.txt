@@ -1,0 +1,81 @@
+=== R14 run 1 ===
+Gather  (cost=1272.27..15656.80 rows=1208 width=20) (actual time=1.551..170.745 rows=6885.00 loops=1)
+  Workers Planned: 2
+  Workers Launched: 2
+  Buffers: shared hit=60106 read=21608 written=15
+  ->  Nested Loop Semi Join  (cost=272.27..14536.00 rows=503 width=20) (actual time=0.740..168.011 rows=2295.00 loops=3)
+        Buffers: shared hit=60106 read=21608 written=15
+        ->  Parallel Bitmap Heap Scan on customers c  (cost=271.84..8198.67 rows=1545 width=20) (actual time=0.530..4.892 rows=8240.00 loops=3)
+              Recheck Cond: (gold_expires_on < '2026-07-01'::date)
+              Filter: is_gold_member
+              Heap Blocks: exact=2545
+              Buffers: shared hit=40 read=7509 written=4
+              Worker 0:  Heap Blocks: exact=2520
+              Worker 1:  Heap Blocks: exact=2422
+              ->  Bitmap Index Scan on customers_gold_expiry_idx  (cost=0.00..270.92 rows=24350 width=0) (actual time=0.912..0.912 rows=24720.00 loops=1)
+                    Index Cond: (gold_expires_on < '2026-07-01'::date)
+                    Index Searches: 1
+                    Buffers: shared read=22
+        ->  Index Only Scan using orders_customer_placed_idx on orders o  (cost=0.43..4.10 rows=1 width=4) (actual time=0.020..0.020 rows=0.28 loops=24720)
+              Index Cond: ((customer_id = c.customer_id) AND (placed_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Index Searches: 24720
+              Buffers: shared hit=60066 read=14099 written=11
+Planning:
+  Buffers: shared hit=475 read=14 dirtied=4
+Planning Time: 1.280 ms
+Execution Time: 170.910 ms
+=== R14 run 2 ===
+Gather  (cost=1272.27..15656.80 rows=1208 width=20) (actual time=1.490..25.475 rows=6885.00 loops=1)
+  Workers Planned: 2
+  Workers Launched: 2
+  Buffers: shared hit=62842 read=18872 written=25
+  ->  Nested Loop Semi Join  (cost=272.27..14536.00 rows=503 width=20) (actual time=0.556..22.560 rows=2295.00 loops=3)
+        Buffers: shared hit=62842 read=18872 written=25
+        ->  Parallel Bitmap Heap Scan on customers c  (cost=271.84..8198.67 rows=1545 width=20) (actual time=0.517..4.669 rows=8240.00 loops=3)
+              Recheck Cond: (gold_expires_on < '2026-07-01'::date)
+              Filter: is_gold_member
+              Heap Blocks: exact=2512
+              Buffers: shared hit=40 read=7509 written=8
+              Worker 0:  Heap Blocks: exact=2492
+              Worker 1:  Heap Blocks: exact=2483
+              ->  Bitmap Index Scan on customers_gold_expiry_idx  (cost=0.00..270.92 rows=24350 width=0) (actual time=0.862..0.862 rows=24720.00 loops=1)
+                    Index Cond: (gold_expires_on < '2026-07-01'::date)
+                    Index Searches: 1
+                    Buffers: shared read=22
+        ->  Index Only Scan using orders_customer_placed_idx on orders o  (cost=0.43..4.10 rows=1 width=4) (actual time=0.002..0.002 rows=0.28 loops=24720)
+              Index Cond: ((customer_id = c.customer_id) AND (placed_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Index Searches: 24720
+              Buffers: shared hit=62802 read=11363 written=17
+Planning:
+  Buffers: shared hit=471 read=16
+Planning Time: 0.723 ms
+Execution Time: 25.612 ms
+=== R14 run 3 ===
+Gather  (cost=1272.27..15656.80 rows=1208 width=20) (actual time=1.487..25.356 rows=6885.00 loops=1)
+  Workers Planned: 2
+  Workers Launched: 2
+  Buffers: shared hit=64598 read=17116
+  ->  Nested Loop Semi Join  (cost=272.27..14536.00 rows=503 width=20) (actual time=0.617..22.120 rows=2295.00 loops=3)
+        Buffers: shared hit=64598 read=17116
+        ->  Parallel Bitmap Heap Scan on customers c  (cost=271.84..8198.67 rows=1545 width=20) (actual time=0.546..4.732 rows=8240.00 loops=3)
+              Recheck Cond: (gold_expires_on < '2026-07-01'::date)
+              Filter: is_gold_member
+              Heap Blocks: exact=2533
+              Buffers: shared hit=40 read=7509
+              Worker 0:  Heap Blocks: exact=2467
+              Worker 1:  Heap Blocks: exact=2487
+              ->  Bitmap Index Scan on customers_gold_expiry_idx  (cost=0.00..270.92 rows=24350 width=0) (actual time=0.845..0.845 rows=24720.00 loops=1)
+                    Index Cond: (gold_expires_on < '2026-07-01'::date)
+                    Index Searches: 1
+                    Buffers: shared read=22
+        ->  Index Only Scan using orders_customer_placed_idx on orders o  (cost=0.43..4.10 rows=1 width=4) (actual time=0.002..0.002 rows=0.28 loops=24720)
+              Index Cond: ((customer_id = c.customer_id) AND (placed_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Index Searches: 24720
+              Buffers: shared hit=64558 read=9607
+Planning:
+  Buffers: shared hit=446 read=41
+Planning Time: 1.794 ms
+Execution Time: 25.507 ms
