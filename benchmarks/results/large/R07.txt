@@ -1,0 +1,99 @@
+=== R07 run 1 ===
+Sort  (cost=65.96..65.98 rows=8 width=53) (actual time=0.736..0.736 rows=10.00 loops=1)
+  Sort Key: (sum(oi.quantity)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=53 read=16
+  ->  GroupAggregate  (cost=65.62..65.84 rows=8 width=53) (actual time=0.728..0.731 rows=10.00 loops=1)
+        Group Key: m.item_name
+        Buffers: shared hit=50 read=16
+        ->  Sort  (cost=65.62..65.64 rows=8 width=22) (actual time=0.718..0.719 rows=10.00 loops=1)
+              Sort Key: m.item_name
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=50 read=16
+              ->  Nested Loop  (cost=1.29..65.50 rows=8 width=22) (actual time=0.291..0.703 rows=10.00 loops=1)
+                    Buffers: shared hit=47 read=16
+                    ->  Nested Loop  (cost=0.86..61.91 rows=8 width=13) (actual time=0.188..0.593 rows=10.00 loops=1)
+                          Buffers: shared hit=8 read=15
+                          ->  Index Scan using orders_restaurant_placed_idx on orders o  (cost=0.43..20.53 rows=3 width=4) (actual time=0.009..0.019 rows=4.00 loops=1)
+                                Index Cond: ((restaurant_id = 217) AND (placed_at >= '2026-05-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-06-01 00:00:00+05:30'::timestamp with time zone))
+                                Filter: ((status)::text = 'DELIVERED'::text)
+                                Index Searches: 1
+                                Buffers: shared hit=3 read=4
+                          ->  Index Scan using order_items_pkey on order_items oi  (cost=0.43..13.75 rows=4 width=17) (actual time=0.143..0.143 rows=2.50 loops=4)
+                                Index Cond: (order_id = o.order_id)
+                                Index Searches: 4
+                                Buffers: shared hit=5 read=11
+                    ->  Index Scan using menu_items_pkey on menu_items m  (cost=0.42..0.45 rows=1 width=17) (actual time=0.011..0.011 rows=1.00 loops=10)
+                          Index Cond: (item_id = oi.item_id)
+                          Index Searches: 10
+                          Buffers: shared hit=39 read=1
+Planning:
+  Buffers: shared hit=479 read=15
+Planning Time: 2.591 ms
+Execution Time: 0.765 ms
+=== R07 run 2 ===
+Sort  (cost=65.96..65.98 rows=8 width=53) (actual time=0.063..0.063 rows=10.00 loops=1)
+  Sort Key: (sum(oi.quantity)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=69
+  ->  GroupAggregate  (cost=65.62..65.84 rows=8 width=53) (actual time=0.056..0.059 rows=10.00 loops=1)
+        Group Key: m.item_name
+        Buffers: shared hit=66
+        ->  Sort  (cost=65.62..65.64 rows=8 width=22) (actual time=0.048..0.048 rows=10.00 loops=1)
+              Sort Key: m.item_name
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=66
+              ->  Nested Loop  (cost=1.29..65.50 rows=8 width=22) (actual time=0.017..0.036 rows=10.00 loops=1)
+                    Buffers: shared hit=63
+                    ->  Nested Loop  (cost=0.86..61.91 rows=8 width=13) (actual time=0.012..0.025 rows=10.00 loops=1)
+                          Buffers: shared hit=23
+                          ->  Index Scan using orders_restaurant_placed_idx on orders o  (cost=0.43..20.53 rows=3 width=4) (actual time=0.007..0.009 rows=4.00 loops=1)
+                                Index Cond: ((restaurant_id = 217) AND (placed_at >= '2026-05-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-06-01 00:00:00+05:30'::timestamp with time zone))
+                                Filter: ((status)::text = 'DELIVERED'::text)
+                                Index Searches: 1
+                                Buffers: shared hit=7
+                          ->  Index Scan using order_items_pkey on order_items oi  (cost=0.43..13.75 rows=4 width=17) (actual time=0.003..0.004 rows=2.50 loops=4)
+                                Index Cond: (order_id = o.order_id)
+                                Index Searches: 4
+                                Buffers: shared hit=16
+                    ->  Index Scan using menu_items_pkey on menu_items m  (cost=0.42..0.45 rows=1 width=17) (actual time=0.001..0.001 rows=1.00 loops=10)
+                          Index Cond: (item_id = oi.item_id)
+                          Index Searches: 10
+                          Buffers: shared hit=40
+Planning:
+  Buffers: shared hit=494
+Planning Time: 0.666 ms
+Execution Time: 0.090 ms
+=== R07 run 3 ===
+Sort  (cost=65.96..65.98 rows=8 width=53) (actual time=0.059..0.059 rows=10.00 loops=1)
+  Sort Key: (sum(oi.quantity)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=69
+  ->  GroupAggregate  (cost=65.62..65.84 rows=8 width=53) (actual time=0.052..0.055 rows=10.00 loops=1)
+        Group Key: m.item_name
+        Buffers: shared hit=66
+        ->  Sort  (cost=65.62..65.64 rows=8 width=22) (actual time=0.045..0.045 rows=10.00 loops=1)
+              Sort Key: m.item_name
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=66
+              ->  Nested Loop  (cost=1.29..65.50 rows=8 width=22) (actual time=0.017..0.034 rows=10.00 loops=1)
+                    Buffers: shared hit=63
+                    ->  Nested Loop  (cost=0.86..61.91 rows=8 width=13) (actual time=0.012..0.024 rows=10.00 loops=1)
+                          Buffers: shared hit=23
+                          ->  Index Scan using orders_restaurant_placed_idx on orders o  (cost=0.43..20.53 rows=3 width=4) (actual time=0.006..0.009 rows=4.00 loops=1)
+                                Index Cond: ((restaurant_id = 217) AND (placed_at >= '2026-05-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-06-01 00:00:00+05:30'::timestamp with time zone))
+                                Filter: ((status)::text = 'DELIVERED'::text)
+                                Index Searches: 1
+                                Buffers: shared hit=7
+                          ->  Index Scan using order_items_pkey on order_items oi  (cost=0.43..13.75 rows=4 width=17) (actual time=0.003..0.003 rows=2.50 loops=4)
+                                Index Cond: (order_id = o.order_id)
+                                Index Searches: 4
+                                Buffers: shared hit=16
+                    ->  Index Scan using menu_items_pkey on menu_items m  (cost=0.42..0.45 rows=1 width=17) (actual time=0.001..0.001 rows=1.00 loops=10)
+                          Index Cond: (item_id = oi.item_id)
+                          Index Searches: 10
+                          Buffers: shared hit=40
+Planning:
+  Buffers: shared hit=494
+Planning Time: 0.649 ms
+Execution Time: 0.083 ms

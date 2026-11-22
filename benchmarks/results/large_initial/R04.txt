@@ -1,0 +1,51 @@
+=== R04 run 1 ===
+Limit  (cost=0.72..90.71 rows=7 width=44) (actual time=0.247..0.548 rows=3.00 loops=1)
+  Buffers: shared hit=6 read=9
+  ->  Nested Loop  (cost=0.72..90.71 rows=7 width=44) (actual time=0.246..0.547 rows=3.00 loops=1)
+        Buffers: shared hit=6 read=9
+        ->  Index Scan using orders_customer_placed_idx on orders o  (cost=0.43..32.55 rows=7 width=32) (actual time=0.013..0.021 rows=3.00 loops=1)
+              Index Cond: (customer_id = 1042)
+              Index Searches: 1
+              Buffers: shared read=6
+        ->  Index Scan using restaurants_pkey on restaurants r  (cost=0.29..8.31 rows=1 width=20) (actual time=0.175..0.175 rows=1.00 loops=3)
+              Index Cond: (restaurant_id = o.restaurant_id)
+              Index Searches: 3
+              Buffers: shared hit=6 read=3
+Planning:
+  Buffers: shared hit=442 read=15 dirtied=1
+Planning Time: 0.738 ms
+Execution Time: 0.566 ms
+=== R04 run 2 ===
+Limit  (cost=0.72..90.71 rows=7 width=44) (actual time=0.011..0.021 rows=3.00 loops=1)
+  Buffers: shared hit=15
+  ->  Nested Loop  (cost=0.72..90.71 rows=7 width=44) (actual time=0.011..0.020 rows=3.00 loops=1)
+        Buffers: shared hit=15
+        ->  Index Scan using orders_customer_placed_idx on orders o  (cost=0.43..32.55 rows=7 width=32) (actual time=0.007..0.009 rows=3.00 loops=1)
+              Index Cond: (customer_id = 1042)
+              Index Searches: 1
+              Buffers: shared hit=6
+        ->  Index Scan using restaurants_pkey on restaurants r  (cost=0.29..8.31 rows=1 width=20) (actual time=0.003..0.003 rows=1.00 loops=3)
+              Index Cond: (restaurant_id = o.restaurant_id)
+              Index Searches: 3
+              Buffers: shared hit=9
+Planning:
+  Buffers: shared hit=457
+Planning Time: 0.628 ms
+Execution Time: 0.038 ms
+=== R04 run 3 ===
+Limit  (cost=0.72..90.71 rows=7 width=44) (actual time=0.010..0.020 rows=3.00 loops=1)
+  Buffers: shared hit=15
+  ->  Nested Loop  (cost=0.72..90.71 rows=7 width=44) (actual time=0.010..0.019 rows=3.00 loops=1)
+        Buffers: shared hit=15
+        ->  Index Scan using orders_customer_placed_idx on orders o  (cost=0.43..32.55 rows=7 width=32) (actual time=0.006..0.008 rows=3.00 loops=1)
+              Index Cond: (customer_id = 1042)
+              Index Searches: 1
+              Buffers: shared hit=6
+        ->  Index Scan using restaurants_pkey on restaurants r  (cost=0.29..8.31 rows=1 width=20) (actual time=0.003..0.003 rows=1.00 loops=3)
+              Index Cond: (restaurant_id = o.restaurant_id)
+              Index Searches: 3
+              Buffers: shared hit=9
+Planning:
+  Buffers: shared hit=457
+Planning Time: 0.595 ms
+Execution Time: 0.036 ms

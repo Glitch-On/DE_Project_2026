@@ -1,0 +1,444 @@
+SET
+Timing is off.
+Pager usage is off.
+psql:sql/08_partitioning.sql:38: NOTICE:  drop cascades to 2 other objects
+DETAIL:  drop cascades to table zomato_part.orders
+drop cascades to table zomato_part.order_items
+DROP SCHEMA
+CREATE SCHEMA
+CREATE TABLE
+psql:sql/08_partitioning.sql:59: NOTICE:  PRIMARY KEY (order_id) rejected: unique constraint on partitioned table must include all partitioning columns
+DO
+DROP TABLE
+CREATE TABLE
+DO
+INSERT 0 3000000
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+VACUUM
+         partition          | orders 
+----------------------------+--------
+ zomato_part.orders_2025_01 | 170330
+ zomato_part.orders_2025_02 | 153846
+ zomato_part.orders_2025_03 | 170330
+ zomato_part.orders_2025_04 | 164835
+ zomato_part.orders_2025_05 | 170330
+ zomato_part.orders_2025_06 | 164835
+ zomato_part.orders_2025_07 | 170330
+ zomato_part.orders_2025_08 | 170329
+ zomato_part.orders_2025_09 | 164835
+ zomato_part.orders_2025_10 | 170330
+ zomato_part.orders_2025_11 | 164835
+ zomato_part.orders_2025_12 | 170330
+ zomato_part.orders_2026_01 | 170330
+ zomato_part.orders_2026_02 | 153846
+ zomato_part.orders_2026_03 | 170329
+ zomato_part.orders_2026_04 | 164836
+ zomato_part.orders_2026_05 | 170329
+ zomato_part.orders_2026_06 | 164835
+(18 rows)
+
+               table                |  heap  | indexes 
+------------------------------------+--------+---------
+ zomato.orders (plain)              | 357 MB | 661 MB
+ zomato_part.orders (24 partitions) | 357 MB | 690 MB
+(2 rows)
+
+SET
+=== P1: R06 on the partitioned table: one restaurant, one day -> 1 of 24 partitions
+                                                                                       QUERY PLAN                                                                                       
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using orders_2026_06_restaurant_id_placed_at_status_idx on orders_2026_06 orders (actual time=0.007..0.007 rows=0.00 loops=1)
+   Index Cond: ((restaurant_id = 217) AND (placed_at >= '2026-06-15 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-06-16 00:00:00+05:30'::timestamp with time zone))
+   Index Searches: 1
+   Buffers: shared read=3
+ Planning:
+   Buffers: shared hit=51 read=6 dirtied=1
+ Planning Time: 0.132 ms
+ Execution Time: 0.009 ms
+(8 rows)
+
+=== P2: R10: deliveries in June 2026 over 60 minutes -> 1 of 24 partitions
+                                                                                                             QUERY PLAN                                                                                                             
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit (actual time=8.851..9.679 rows=100.00 loops=1)
+   Buffers: shared hit=39 read=2503 written=29
+   ->  Gather Merge (actual time=8.850..9.675 rows=100.00 loops=1)
+         Workers Planned: 1
+         Workers Launched: 1
+         Buffers: shared hit=39 read=2503 written=29
+         ->  Sort (actual time=7.169..7.170 rows=82.50 loops=2)
+               Sort Key: ((orders.delivered_at - orders.placed_at)) DESC
+               Sort Method: top-N heapsort  Memory: 36kB
+               Buffers: shared hit=39 read=2503 written=29
+               Worker 0:  Sort Method: top-N heapsort  Memory: 37kB
+               ->  Parallel Seq Scan on orders_2026_06 orders (actual time=0.024..5.857 rows=23555.50 loops=2)
+                     Filter: ((placed_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (placed_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone) AND ((delivered_at - placed_at) > '01:00:00'::interval))
+                     Rows Removed by Filter: 58862
+                     Buffers: shared read=2502 written=29
+ Planning:
+   Buffers: shared hit=17 read=5
+ Planning Time: 0.096 ms
+ Execution Time: 9.690 ms
+(19 rows)
+
+=== P3: R22: last 8 weeks, bound computed at run time -> pruned at executor start-up
+                                                              QUERY PLAN                                                              
+--------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate (actual time=33.673..42.422 rows=168.00 loops=1)
+   Group Key: (EXTRACT(isodow FROM o.placed_at)), (EXTRACT(hour FROM o.placed_at))
+   Buffers: shared hit=7003 read=948
+   ->  Gather Merge (actual time=33.620..39.438 rows=49455.00 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=7003 read=948
+         ->  Sort (actual time=29.862..30.184 rows=16485.00 loops=3)
+               Sort Key: (EXTRACT(isodow FROM o.placed_at)), (EXTRACT(hour FROM o.placed_at))
+               Sort Method: quicksort  Memory: 1389kB
+               Buffers: shared hit=7003 read=948
+               Worker 0:  Sort Method: quicksort  Memory: 848kB
+               Worker 1:  Sort Method: quicksort  Memory: 830kB
+               ->  Hash Join (actual time=4.349..24.622 rows=16485.00 loops=3)
+                     Hash Cond: (o.restaurant_id = r.restaurant_id)
+                     Buffers: shared hit=6989 read=948
+                     ->  Parallel Append (actual time=0.763..15.159 rows=102564.00 loops=3)
+                           Buffers: shared hit=5093
+                           Subplans Removed: 16
+                           ->  Seq Scan on orders_2026_07 o_3 (actual time=0.023..0.024 rows=0.00 loops=1)
+                                 Filter: (placed_at >= ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '56 days'::interval))
+                           ->  Seq Scan on orders_2026_08 o_4 (actual time=0.024..0.024 rows=0.00 loops=1)
+                                 Filter: (placed_at >= ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '56 days'::interval))
+                           ->  Seq Scan on orders_2026_09 o_5 (actual time=0.020..0.020 rows=0.00 loops=1)
+                                 Filter: (placed_at >= ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '56 days'::interval))
+                           ->  Seq Scan on orders_2026_10 o_6 (actual time=0.021..0.021 rows=0.00 loops=1)
+                                 Filter: (placed_at >= ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '56 days'::interval))
+                           ->  Seq Scan on orders_2026_11 o_7 (actual time=0.026..0.026 rows=0.00 loops=1)
+                                 Filter: (placed_at >= ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '56 days'::interval))
+                           ->  Seq Scan on orders_2026_12 o_8 (actual time=0.026..0.026 rows=0.00 loops=1)
+                                 Filter: (placed_at >= ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '56 days'::interval))
+                           ->  Parallel Seq Scan on orders_2026_05 o_1 (actual time=0.717..5.830 rows=47619.00 loops=3)
+                                 Filter: (placed_at >= ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '56 days'::interval))
+                                 Rows Removed by Filter: 9157
+                                 Buffers: shared hit=2591
+                           ->  Parallel Seq Scan on orders_2026_06 o_2 (actual time=0.003..8.688 rows=82417.50 loops=2)
+                                 Filter: (placed_at >= ('2026-07-01 00:00:00+05:30'::timestamp with time zone - '56 days'::interval))
+                                 Buffers: shared hit=2502
+                     ->  Hash (actual time=3.571..3.572 rows=8000.00 loops=3)
+                           Buckets: 8192  Batches: 1  Memory Usage: 346kB
+                           Buffers: shared hit=1896 read=948
+                           ->  Hash Join (actual time=0.057..3.257 rows=8000.00 loops=3)
+                                 Hash Cond: (r.locality_id = l.locality_id)
+                                 Buffers: shared hit=1896 read=948
+                                 ->  Seq Scan on restaurants r (actual time=0.028..1.455 rows=50000.00 loops=3)
+                                       Buffers: shared hit=1894 read=947
+                                 ->  Hash (actual time=0.024..0.024 rows=10.00 loops=3)
+                                       Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                       Buffers: shared hit=2 read=1
+                                       ->  Seq Scan on localities l (actual time=0.019..0.021 rows=10.00 loops=3)
+                                             Filter: (city_id = 1)
+                                             Rows Removed by Filter: 90
+                                             Buffers: shared hit=2 read=1
+ Planning:
+   Buffers: shared hit=367 read=193 dirtied=12
+ Planning Time: 3.036 ms
+ Execution Time: 42.450 ms
+(57 rows)
+
+=== P4: R23 keyset page: ORDER BY the partition key -> Ordered Append, stops in the newest partition
+                                                                                   QUERY PLAN                                                                                    
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit (actual time=0.008..0.012 rows=25.00 loops=1)
+   Buffers: shared hit=3 read=2
+   ->  Append (actual time=0.008..0.011 rows=25.00 loops=1)
+         Buffers: shared hit=3 read=2
+         ->  Index Scan Backward using orders_2026_06_placed_at_order_id_customer_id_restaurant_id_idx on orders_2026_06 orders_18 (actual time=0.008..0.010 rows=25.00 loops=1)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 1
+               Buffers: shared hit=3 read=2
+         ->  Index Scan Backward using orders_2026_05_placed_at_order_id_customer_id_restaurant_id_idx on orders_2026_05 orders_17 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2026_04_placed_at_order_id_customer_id_restaurant_id_idx on orders_2026_04 orders_16 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2026_03_placed_at_order_id_customer_id_restaurant_id_idx on orders_2026_03 orders_15 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2026_02_placed_at_order_id_customer_id_restaurant_id_idx on orders_2026_02 orders_14 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2026_01_placed_at_order_id_customer_id_restaurant_id_idx on orders_2026_01 orders_13 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2025_12_placed_at_order_id_customer_id_restaurant_id_idx on orders_2025_12 orders_12 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2025_11_placed_at_order_id_customer_id_restaurant_id_idx on orders_2025_11 orders_11 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2025_10_placed_at_order_id_customer_id_restaurant_id_idx on orders_2025_10 orders_10 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2025_09_placed_at_order_id_customer_id_restaurant_id_idx on orders_2025_09 orders_9 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2025_08_placed_at_order_id_customer_id_restaurant_id_idx on orders_2025_08 orders_8 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2025_07_placed_at_order_id_customer_id_restaurant_id_idx on orders_2025_07 orders_7 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2025_06_placed_at_order_id_customer_id_restaurant_id_idx on orders_2025_06 orders_6 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2025_05_placed_at_order_id_customer_id_restaurant_id_idx on orders_2025_05 orders_5 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2025_04_placed_at_order_id_customer_id_restaurant_id_idx on orders_2025_04 orders_4 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2025_03_placed_at_order_id_customer_id_restaurant_id_idx on orders_2025_03 orders_3 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2025_02_placed_at_order_id_customer_id_restaurant_id_idx on orders_2025_02 orders_2 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+         ->  Index Scan Backward using orders_2025_01_placed_at_order_id_customer_id_restaurant_id_idx on orders_2025_01 orders_1 (never executed)
+               Index Cond: (placed_at < '2026-06-12 19:12:00+05:30'::timestamp with time zone)
+               Index Searches: 0
+ Planning:
+   Buffers: shared hit=207 read=5
+ Planning Time: 1.194 ms
+ Execution Time: 0.029 ms
+(63 rows)
+
+=== P5: the cost of partitioning: R24 looks an order up by order_id only -> all 24 partitions probed
+                                                     QUERY PLAN                                                      
+---------------------------------------------------------------------------------------------------------------------
+ Append (actual time=0.009..0.220 rows=1.00 loops=1)
+   Buffers: shared read=55
+   ->  Index Scan using orders_2025_01_pkey on orders_2025_01 orders_1 (actual time=0.009..0.009 rows=1.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=4
+   ->  Index Scan using orders_2025_02_pkey on orders_2025_02 orders_2 (actual time=0.007..0.007 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2025_03_pkey on orders_2025_03 orders_3 (actual time=0.008..0.008 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2025_04_pkey on orders_2025_04 orders_4 (actual time=0.008..0.008 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2025_05_pkey on orders_2025_05 orders_5 (actual time=0.029..0.029 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2025_06_pkey on orders_2025_06 orders_6 (actual time=0.015..0.015 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2025_07_pkey on orders_2025_07 orders_7 (actual time=0.012..0.012 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2025_08_pkey on orders_2025_08 orders_8 (actual time=0.012..0.012 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2025_09_pkey on orders_2025_09 orders_9 (actual time=0.009..0.009 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2025_10_pkey on orders_2025_10 orders_10 (actual time=0.014..0.014 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2025_11_pkey on orders_2025_11 orders_11 (actual time=0.011..0.011 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2025_12_pkey on orders_2025_12 orders_12 (actual time=0.012..0.012 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2026_01_pkey on orders_2026_01 orders_13 (actual time=0.008..0.008 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2026_02_pkey on orders_2026_02 orders_14 (actual time=0.013..0.013 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2026_03_pkey on orders_2026_03 orders_15 (actual time=0.012..0.012 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2026_04_pkey on orders_2026_04 orders_16 (actual time=0.012..0.012 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2026_05_pkey on orders_2026_05 orders_17 (actual time=0.008..0.008 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Index Scan using orders_2026_06_pkey on orders_2026_06 orders_18 (actual time=0.015..0.015 rows=0.00 loops=1)
+         Index Cond: (order_id = 123457)
+         Index Searches: 1
+         Buffers: shared read=3
+   ->  Seq Scan on orders_2026_07 orders_19 (actual time=0.001..0.001 rows=0.00 loops=1)
+         Filter: (order_id = 123457)
+   ->  Seq Scan on orders_2026_08 orders_20 (actual time=0.001..0.001 rows=0.00 loops=1)
+         Filter: (order_id = 123457)
+   ->  Seq Scan on orders_2026_09 orders_21 (actual time=0.001..0.001 rows=0.00 loops=1)
+         Filter: (order_id = 123457)
+   ->  Seq Scan on orders_2026_10 orders_22 (actual time=0.001..0.001 rows=0.00 loops=1)
+         Filter: (order_id = 123457)
+   ->  Seq Scan on orders_2026_11 orders_23 (actual time=0.000..0.000 rows=0.00 loops=1)
+         Filter: (order_id = 123457)
+   ->  Seq Scan on orders_2026_12 orders_24 (actual time=0.001..0.001 rows=0.00 loops=1)
+         Filter: (order_id = 123457)
+ Planning:
+   Buffers: shared hit=82
+ Planning Time: 1.207 ms
+ Execution Time: 0.235 ms
+(90 rows)
+
+=== P6: the same lookup when the caller also passes placed_at (option a above) -> 1 partition
+                                                                       QUERY PLAN                                                                       
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using orders_2025_01_placed_at_order_id_customer_id_restaurant_id_idx on orders_2025_01 orders (actual time=0.007..0.007 rows=1.00 loops=1)
+   Index Cond: (placed_at = '2025-01-23 11:15:20+05:30'::timestamp with time zone)
+   Filter: (order_id = 123457)
+   Index Searches: 1
+   Buffers: shared hit=2 read=2
+ Planning:
+   Buffers: shared hit=2
+ Planning Time: 0.067 ms
+ Execution Time: 0.009 ms
+(9 rows)
+
+=== P7: R04: a customer's last 10 orders: no placed_at filter -> every partition, merged
+                                                                                QUERY PLAN                                                                                 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit (actual time=0.038..0.155 rows=3.00 loops=1)
+   Buffers: shared hit=7 read=56
+   ->  Append (actual time=0.038..0.155 rows=3.00 loops=1)
+         Buffers: shared hit=7 read=56
+         ->  Index Scan Backward using orders_2026_12_placed_at_order_id_customer_id_restaurant_id_idx on orders_2026_12 o_24 (actual time=0.001..0.001 rows=0.00 loops=1)
+               Filter: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared hit=1
+         ->  Index Scan Backward using orders_2026_11_placed_at_order_id_customer_id_restaurant_id_idx on orders_2026_11 o_23 (actual time=0.000..0.000 rows=0.00 loops=1)
+               Filter: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared hit=1
+         ->  Index Scan Backward using orders_2026_10_placed_at_order_id_customer_id_restaurant_id_idx on orders_2026_10 o_22 (actual time=0.000..0.000 rows=0.00 loops=1)
+               Filter: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared hit=1
+         ->  Index Scan Backward using orders_2026_09_placed_at_order_id_customer_id_restaurant_id_idx on orders_2026_09 o_21 (actual time=0.010..0.010 rows=0.00 loops=1)
+               Filter: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared hit=1
+         ->  Index Scan Backward using orders_2026_08_placed_at_order_id_customer_id_restaurant_id_idx on orders_2026_08 o_20 (actual time=0.000..0.000 rows=0.00 loops=1)
+               Filter: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared hit=1
+         ->  Index Scan Backward using orders_2026_07_placed_at_order_id_customer_id_restaurant_id_idx on orders_2026_07 o_19 (actual time=0.000..0.000 rows=0.00 loops=1)
+               Filter: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared hit=1
+         ->  Index Scan using orders_2026_06_customer_id_placed_at_status_total_amount_idx on orders_2026_06 o_18 (actual time=0.007..0.007 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2026_05_customer_id_placed_at_status_total_amount_idx on orders_2026_05 o_17 (actual time=0.006..0.006 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2026_04_customer_id_placed_at_status_total_amount_idx on orders_2026_04 o_16 (actual time=0.006..0.006 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2026_03_customer_id_placed_at_status_total_amount_idx on orders_2026_03 o_15 (actual time=0.006..0.007 rows=1.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared hit=1 read=3
+         ->  Index Scan using orders_2026_02_customer_id_placed_at_status_total_amount_idx on orders_2026_02 o_14 (actual time=0.006..0.006 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2026_01_customer_id_placed_at_status_total_amount_idx on orders_2026_01 o_13 (actual time=0.006..0.006 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2025_12_customer_id_placed_at_status_total_amount_idx on orders_2025_12 o_12 (actual time=0.006..0.006 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2025_11_customer_id_placed_at_status_total_amount_idx on orders_2025_11 o_11 (actual time=0.006..0.006 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2025_10_customer_id_placed_at_status_total_amount_idx on orders_2025_10 o_10 (actual time=0.005..0.006 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2025_09_customer_id_placed_at_status_total_amount_idx on orders_2025_09 o_9 (actual time=0.006..0.006 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2025_08_customer_id_placed_at_status_total_amount_idx on orders_2025_08 o_8 (actual time=0.006..0.006 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2025_07_customer_id_placed_at_status_total_amount_idx on orders_2025_07 o_7 (actual time=0.006..0.006 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2025_06_customer_id_placed_at_status_total_amount_idx on orders_2025_06 o_6 (actual time=0.006..0.006 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2025_05_customer_id_placed_at_status_total_amount_idx on orders_2025_05 o_5 (actual time=0.010..0.010 rows=1.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=4
+         ->  Index Scan using orders_2025_04_customer_id_placed_at_status_total_amount_idx on orders_2025_04 o_4 (actual time=0.012..0.012 rows=1.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=4
+         ->  Index Scan using orders_2025_03_customer_id_placed_at_status_total_amount_idx on orders_2025_03 o_3 (actual time=0.016..0.016 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2025_02_customer_id_placed_at_status_total_amount_idx on orders_2025_02 o_2 (actual time=0.013..0.013 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+         ->  Index Scan using orders_2025_01_customer_id_placed_at_status_total_amount_idx on orders_2025_01 o_1 (actual time=0.013..0.013 rows=0.00 loops=1)
+               Index Cond: (customer_id = 1042)
+               Index Searches: 1
+               Buffers: shared read=3
+ Planning:
+   Buffers: shared hit=82
+ Planning Time: 1.155 ms
+ Execution Time: 0.171 ms
+(104 rows)
+
+CREATE TABLE
+          conname          |                                             pg_get_constraintdef                                             
+---------------------------+--------------------------------------------------------------------------------------------------------------
+ order_items_item_id_fkey  | FOREIGN KEY (item_id) REFERENCES menu_items(item_id) ON UPDATE CASCADE ON DELETE RESTRICT
+ order_items_order_id_fkey | FOREIGN KEY (order_id, placed_at) REFERENCES orders(order_id, placed_at) ON UPDATE CASCADE ON DELETE CASCADE
+(2 rows)
+

@@ -1,0 +1,150 @@
+=== R19 run 1 ===
+Sort  (cost=2831.42..2832.05 rows=250 width=67) (actual time=19.080..19.089 rows=400.00 loops=1)
+  Sort Key: ((SubPlan 2)) DESC NULLS LAST
+  Sort Method: quicksort  Memory: 49kB
+  Buffers: shared hit=2824 read=592 written=495
+  ->  Hash Join  (cost=2.38..2821.46 rows=250 width=67) (actual time=0.685..19.021 rows=400.00 loops=1)
+        Hash Cond: (r.locality_id = l.locality_id)
+        Buffers: shared hit=2821 read=592 written=495
+        ->  Seq Scan on restaurants r  (cost=0.00..72.00 rows=2500 width=23) (actual time=0.004..0.118 rows=2500.00 loops=1)
+              Buffers: shared hit=47
+        ->  Hash  (cost=2.25..2.25 rows=10 width=4) (actual time=0.006..0.007 rows=10.00 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on localities l  (cost=0.00..2.25 rows=10 width=4) (actual time=0.003..0.005 rows=10.00 loops=1)
+                    Filter: (city_id = 1)
+                    Rows Removed by Filter: 90
+                    Buffers: shared hit=1
+        SubPlan 2
+          ->  Result  (cost=0.50..0.51 rows=1 width=8) (actual time=0.034..0.034 rows=1.00 loops=400)
+                Buffers: shared hit=835 read=366 written=308
+                InitPlan 1
+                  ->  Limit  (cost=0.42..0.50 rows=1 width=8) (actual time=0.033..0.033 rows=0.96 loops=400)
+                        Buffers: shared hit=835 read=366 written=308
+                        ->  Index Only Scan Backward using orders_restaurant_placed_idx on orders o  (cost=0.42..5.52 rows=63 width=8) (actual time=0.033..0.033 rows=0.96 loops=400)
+                              Index Cond: (restaurant_id = r.restaurant_id)
+                              Heap Fetches: 0
+                              Index Searches: 400
+                              Buffers: shared hit=835 read=366 written=308
+        SubPlan 3
+          ->  Aggregate  (cost=5.81..5.82 rows=1 width=8) (actual time=0.009..0.009 rows=1.00 loops=400)
+                Buffers: shared hit=1229 read=116 written=96
+                ->  Index Only Scan using orders_restaurant_placed_idx on orders o_1  (cost=0.42..5.68 rows=54 width=0) (actual time=0.006..0.008 rows=52.38 loops=400)
+                      Index Cond: (restaurant_id = r.restaurant_id)
+                      Filter: ((status)::text = 'DELIVERED'::text)
+                      Rows Removed by Filter: 8
+                      Heap Fetches: 0
+                      Index Searches: 400
+                      Buffers: shared hit=1229 read=116 written=96
+        SubPlan 4
+          ->  Aggregate  (cost=4.61..4.63 rows=1 width=32) (actual time=0.004..0.004 rows=1.00 loops=400)
+                Buffers: shared hit=709 read=110 written=91
+                ->  Index Only Scan using reviews_restaurant_idx on reviews v  (cost=0.29..4.57 rows=16 width=4) (actual time=0.003..0.003 rows=15.77 loops=400)
+                      Index Cond: (restaurant_id = r.restaurant_id)
+                      Heap Fetches: 0
+                      Index Searches: 400
+                      Buffers: shared hit=709 read=110 written=91
+Planning:
+  Buffers: shared hit=536 read=1
+Planning Time: 0.774 ms
+Execution Time: 19.132 ms
+=== R19 run 2 ===
+Sort  (cost=2831.42..2832.05 rows=250 width=67) (actual time=4.005..4.013 rows=400.00 loops=1)
+  Sort Key: ((SubPlan 2)) DESC NULLS LAST
+  Sort Method: quicksort  Memory: 49kB
+  Buffers: shared hit=3416
+  ->  Hash Join  (cost=2.38..2821.46 rows=250 width=67) (actual time=0.078..3.957 rows=400.00 loops=1)
+        Hash Cond: (r.locality_id = l.locality_id)
+        Buffers: shared hit=3413
+        ->  Seq Scan on restaurants r  (cost=0.00..72.00 rows=2500 width=23) (actual time=0.003..0.102 rows=2500.00 loops=1)
+              Buffers: shared hit=47
+        ->  Hash  (cost=2.25..2.25 rows=10 width=4) (actual time=0.006..0.006 rows=10.00 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on localities l  (cost=0.00..2.25 rows=10 width=4) (actual time=0.002..0.004 rows=10.00 loops=1)
+                    Filter: (city_id = 1)
+                    Rows Removed by Filter: 90
+                    Buffers: shared hit=1
+        SubPlan 2
+          ->  Result  (cost=0.50..0.51 rows=1 width=8) (actual time=0.002..0.002 rows=1.00 loops=400)
+                Buffers: shared hit=1201
+                InitPlan 1
+                  ->  Limit  (cost=0.42..0.50 rows=1 width=8) (actual time=0.002..0.002 rows=0.96 loops=400)
+                        Buffers: shared hit=1201
+                        ->  Index Only Scan Backward using orders_restaurant_placed_idx on orders o  (cost=0.42..5.52 rows=63 width=8) (actual time=0.002..0.002 rows=0.96 loops=400)
+                              Index Cond: (restaurant_id = r.restaurant_id)
+                              Heap Fetches: 0
+                              Index Searches: 400
+                              Buffers: shared hit=1201
+        SubPlan 3
+          ->  Aggregate  (cost=5.81..5.82 rows=1 width=8) (actual time=0.005..0.005 rows=1.00 loops=400)
+                Buffers: shared hit=1345
+                ->  Index Only Scan using orders_restaurant_placed_idx on orders o_1  (cost=0.42..5.68 rows=54 width=0) (actual time=0.001..0.004 rows=52.38 loops=400)
+                      Index Cond: (restaurant_id = r.restaurant_id)
+                      Filter: ((status)::text = 'DELIVERED'::text)
+                      Rows Removed by Filter: 8
+                      Heap Fetches: 0
+                      Index Searches: 400
+                      Buffers: shared hit=1345
+        SubPlan 4
+          ->  Aggregate  (cost=4.61..4.63 rows=1 width=32) (actual time=0.002..0.002 rows=1.00 loops=400)
+                Buffers: shared hit=819
+                ->  Index Only Scan using reviews_restaurant_idx on reviews v  (cost=0.29..4.57 rows=16 width=4) (actual time=0.001..0.001 rows=15.77 loops=400)
+                      Index Cond: (restaurant_id = r.restaurant_id)
+                      Heap Fetches: 0
+                      Index Searches: 400
+                      Buffers: shared hit=819
+Planning:
+  Buffers: shared hit=537
+Planning Time: 0.708 ms
+Execution Time: 4.050 ms
+=== R19 run 3 ===
+Sort  (cost=2831.42..2832.05 rows=250 width=67) (actual time=3.939..3.947 rows=400.00 loops=1)
+  Sort Key: ((SubPlan 2)) DESC NULLS LAST
+  Sort Method: quicksort  Memory: 49kB
+  Buffers: shared hit=3416
+  ->  Hash Join  (cost=2.38..2821.46 rows=250 width=67) (actual time=0.079..3.887 rows=400.00 loops=1)
+        Hash Cond: (r.locality_id = l.locality_id)
+        Buffers: shared hit=3413
+        ->  Seq Scan on restaurants r  (cost=0.00..72.00 rows=2500 width=23) (actual time=0.004..0.115 rows=2500.00 loops=1)
+              Buffers: shared hit=47
+        ->  Hash  (cost=2.25..2.25 rows=10 width=4) (actual time=0.007..0.007 rows=10.00 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=1
+              ->  Seq Scan on localities l  (cost=0.00..2.25 rows=10 width=4) (actual time=0.002..0.004 rows=10.00 loops=1)
+                    Filter: (city_id = 1)
+                    Rows Removed by Filter: 90
+                    Buffers: shared hit=1
+        SubPlan 2
+          ->  Result  (cost=0.50..0.51 rows=1 width=8) (actual time=0.002..0.002 rows=1.00 loops=400)
+                Buffers: shared hit=1201
+                InitPlan 1
+                  ->  Limit  (cost=0.42..0.50 rows=1 width=8) (actual time=0.002..0.002 rows=0.96 loops=400)
+                        Buffers: shared hit=1201
+                        ->  Index Only Scan Backward using orders_restaurant_placed_idx on orders o  (cost=0.42..5.52 rows=63 width=8) (actual time=0.002..0.002 rows=0.96 loops=400)
+                              Index Cond: (restaurant_id = r.restaurant_id)
+                              Heap Fetches: 0
+                              Index Searches: 400
+                              Buffers: shared hit=1201
+        SubPlan 3
+          ->  Aggregate  (cost=5.81..5.82 rows=1 width=8) (actual time=0.005..0.005 rows=1.00 loops=400)
+                Buffers: shared hit=1345
+                ->  Index Only Scan using orders_restaurant_placed_idx on orders o_1  (cost=0.42..5.68 rows=54 width=0) (actual time=0.001..0.003 rows=52.38 loops=400)
+                      Index Cond: (restaurant_id = r.restaurant_id)
+                      Filter: ((status)::text = 'DELIVERED'::text)
+                      Rows Removed by Filter: 8
+                      Heap Fetches: 0
+                      Index Searches: 400
+                      Buffers: shared hit=1345
+        SubPlan 4
+          ->  Aggregate  (cost=4.61..4.63 rows=1 width=32) (actual time=0.002..0.002 rows=1.00 loops=400)
+                Buffers: shared hit=819
+                ->  Index Only Scan using reviews_restaurant_idx on reviews v  (cost=0.29..4.57 rows=16 width=4) (actual time=0.001..0.001 rows=15.77 loops=400)
+                      Index Cond: (restaurant_id = r.restaurant_id)
+                      Heap Fetches: 0
+                      Index Searches: 400
+                      Buffers: shared hit=819
+Planning:
+  Buffers: shared hit=537
+Planning Time: 0.747 ms
+Execution Time: 3.991 ms

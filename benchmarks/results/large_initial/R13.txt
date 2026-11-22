@@ -1,0 +1,60 @@
+=== R13 run 1 ===
+Hash Right Anti Join  (cost=1116.49..3076.61 rows=1562 width=27) (actual time=5.019..5.141 rows=2712.00 loops=1)
+  Hash Cond: (o.partner_id = p.partner_id)
+  Buffers: shared hit=278 read=447
+  ->  Index Only Scan using orders_placed_at_idx on orders o  (cost=0.43..1623.04 rows=31692 width=4) (actual time=0.009..1.577 rows=32967.00 loops=1)
+        Index Cond: (placed_at >= '2026-06-25 00:00:00+05:30'::timestamp with time zone)
+        Heap Fetches: 0
+        Index Searches: 1
+        Buffers: shared hit=278 read=1
+  ->  Hash  (cost=1046.00..1046.00 rows=5605 width=27) (actual time=2.189..2.190 rows=5685.00 loops=1)
+        Buckets: 8192  Batches: 1  Memory Usage: 392kB
+        Buffers: shared read=446
+        ->  Seq Scan on delivery_partners p  (cost=0.00..1046.00 rows=5605 width=27) (actual time=0.023..1.877 rows=5685.00 loops=1)
+              Filter: ((city_id = 1) AND ((status)::text = 'ACTIVE'::text))
+              Rows Removed by Filter: 34315
+              Buffers: shared read=446
+Planning:
+  Buffers: shared hit=421 read=11 dirtied=2
+Planning Time: 0.965 ms
+Execution Time: 5.207 ms
+=== R13 run 2 ===
+Hash Right Anti Join  (cost=1116.49..3076.61 rows=1562 width=27) (actual time=4.992..5.106 rows=2712.00 loops=1)
+  Hash Cond: (o.partner_id = p.partner_id)
+  Buffers: shared hit=725
+  ->  Index Only Scan using orders_placed_at_idx on orders o  (cost=0.43..1623.04 rows=31692 width=4) (actual time=0.005..1.602 rows=32967.00 loops=1)
+        Index Cond: (placed_at >= '2026-06-25 00:00:00+05:30'::timestamp with time zone)
+        Heap Fetches: 0
+        Index Searches: 1
+        Buffers: shared hit=279
+  ->  Hash  (cost=1046.00..1046.00 rows=5605 width=27) (actual time=2.165..2.166 rows=5685.00 loops=1)
+        Buckets: 8192  Batches: 1  Memory Usage: 392kB
+        Buffers: shared hit=446
+        ->  Seq Scan on delivery_partners p  (cost=0.00..1046.00 rows=5605 width=27) (actual time=0.004..1.854 rows=5685.00 loops=1)
+              Filter: ((city_id = 1) AND ((status)::text = 'ACTIVE'::text))
+              Rows Removed by Filter: 34315
+              Buffers: shared hit=446
+Planning:
+  Buffers: shared hit=432
+Planning Time: 0.587 ms
+Execution Time: 5.172 ms
+=== R13 run 3 ===
+Hash Right Anti Join  (cost=1116.49..3076.61 rows=1562 width=27) (actual time=5.005..5.125 rows=2712.00 loops=1)
+  Hash Cond: (o.partner_id = p.partner_id)
+  Buffers: shared hit=725
+  ->  Index Only Scan using orders_placed_at_idx on orders o  (cost=0.43..1623.04 rows=31692 width=4) (actual time=0.006..1.605 rows=32967.00 loops=1)
+        Index Cond: (placed_at >= '2026-06-25 00:00:00+05:30'::timestamp with time zone)
+        Heap Fetches: 0
+        Index Searches: 1
+        Buffers: shared hit=279
+  ->  Hash  (cost=1046.00..1046.00 rows=5605 width=27) (actual time=2.137..2.137 rows=5685.00 loops=1)
+        Buckets: 8192  Batches: 1  Memory Usage: 392kB
+        Buffers: shared hit=446
+        ->  Seq Scan on delivery_partners p  (cost=0.00..1046.00 rows=5605 width=27) (actual time=0.003..1.829 rows=5685.00 loops=1)
+              Filter: ((city_id = 1) AND ((status)::text = 'ACTIVE'::text))
+              Rows Removed by Filter: 34315
+              Buffers: shared hit=446
+Planning:
+  Buffers: shared hit=427
+Planning Time: 0.540 ms
+Execution Time: 5.190 ms

@@ -1,0 +1,55 @@
+# Storage, measured with benchmarks/storage.sql (pg_table_size / pg_indexes_size, schema zomato)
+# zomato_seed: 01 + 02 (seed_data/) + 05.  zomato_large: 01 + 02 (large_data/) + 05 + 07, before 08 was run.
+
+## zomato_seed
+db_size
+121 MB
+(1 row)
+relname | rows | heap | indexes | total | heap_b | idx_b
+orders | 150000 | 18 MB | 33 MB | 51 MB | 18726912 | 34824192
+order_items | 375000 | 19 MB | 8232 kB | 27 MB | 19603456 | 8429568
+payments | 137378 | 9192 kB | 6288 kB | 15 MB | 9412608 | 6438912
+menu_items | 50000 | 3488 kB | 2952 kB | 6440 kB | 3571712 | 3022848
+reviews | 39186 | 2824 kB | 3504 kB | 6328 kB | 2891776 | 3588096
+customers | 25000 | 3016 kB | 3072 kB | 6088 kB | 3088384 | 3145728
+restaurants | 2500 | 416 kB | 672 kB | 1088 kB | 425984 | 688128
+delivery_partners | 2000 | 216 kB | 144 kB | 360 kB | 221184 | 147456
+localities | 100 | 40 kB | 48 kB | 88 kB | 40960 | 49152
+cities | 10 | 40 kB | 32 kB | 72 kB | 40960 | 32768
+mv_city_month_delivery | 180 | 56 kB | 16 kB | 72 kB | 57344 | 16384
+coupons | 30 | 40 kB | 16 kB | 56 kB | 40960 | 16384
+(12 rows)
+heap | idx | hb | ib
+55 MB | 58 MB | 58122240 | 60399616
+(1 row)
+## zomato_large
+db_size
+2237 MB
+(1 row)
+relname | rows | heap | indexes | total | heap_b | idx_b
+orders | 2999926 | 357 MB | 661 MB | 1018 MB | 373899264 | 693624832
+order_items | 7500277 | 374 MB | 160 MB | 534 MB | 391774208 | 168173568
+payments | 2749715 | 179 MB | 122 MB | 301 MB | 187768832 | 128008192
+menu_items | 1000000 | 67 MB | 57 MB | 125 MB | 70696960 | 59875328
+reviews | 781962 | 55 MB | 67 MB | 122 MB | 57196544 | 70361088
+customers | 500000 | 61 MB | 50 MB | 111 MB | 63938560 | 52502528
+restaurants | 50000 | 7616 kB | 5376 kB | 13 MB | 7798784 | 5505024
+delivery_partners | 40000 | 3600 kB | 2144 kB | 5744 kB | 3686400 | 2195456
+localities | 100 | 40 kB | 48 kB | 88 kB | 40960 | 49152
+cities | 10 | 40 kB | 32 kB | 72 kB | 40960 | 32768
+mv_city_month_delivery | 180 | 56 kB | 16 kB | 72 kB | 57344 | 16384
+coupons | 30 | 40 kB | 16 kB | 56 kB | 40960 | 16384
+(12 rows)
+heap | idx | hb | ib
+1103 MB | 1126 MB | 1156939776 | 1180360704
+(1 row)
+
+# Maintenance timings (psql 	iming), run after the benchmarks
+## zomato_seed
+REFRESH MATERIALIZED VIEW CONCURRENTLY mv_city_month_delivery: 92.662 ms, 50.937 ms
+VACUUM (ANALYZE) orders: 68.000 ms
+## zomato_large
+REFRESH MATERIALIZED VIEW CONCURRENTLY mv_city_month_delivery: 1003.025 ms, 989.735 ms
+VACUUM (ANALYZE) orders: 115.994 ms
+
+# Load (zomato_large, clean rebuild): 02_load_data.sql 138 s, 05_indexes.sql 8 s, 07_scale_fixes.sql 2 s

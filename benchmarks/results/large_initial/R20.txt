@@ -1,0 +1,84 @@
+=== R20 run 1 ===
+Limit  (cost=385012.77..385012.82 rows=20 width=56) (actual time=174.763..174.765 rows=20.00 loops=1)
+  Buffers: shared hit=352735 read=25673 written=41
+  ->  Sort  (cost=385012.77..385212.77 rows=80000 width=56) (actual time=174.763..174.763 rows=20.00 loops=1)
+        Sort Key: (sum(o.total_amount)) DESC
+        Sort Method: top-N heapsort  Memory: 27kB
+        Buffers: shared hit=352735 read=25673 written=41
+        ->  Nested Loop  (cost=4.60..382884.00 rows=80000 width=56) (actual time=0.069..168.265 rows=79547.00 loops=1)
+              Buffers: shared hit=352732 read=25673 written=41
+              ->  Seq Scan on customers c  (cost=0.00..12884.00 rows=80000 width=16) (actual time=0.029..20.037 rows=80000.00 loops=1)
+                    Filter: (city_id = 2)
+                    Rows Removed by Filter: 420000
+                    Buffers: shared read=6634
+              ->  Aggregate  (cost=4.60..4.62 rows=1 width=40) (actual time=0.002..0.002 rows=0.99 loops=80000)
+                    Filter: (count(*) > 0)
+                    Rows Removed by Filter: 0
+                    Buffers: shared hit=352732 read=19039 written=41
+                    ->  Index Only Scan using orders_customer_placed_idx on orders o  (cost=0.43..4.57 rows=6 width=5) (actual time=0.001..0.001 rows=5.23 loops=80000)
+                          Index Cond: (customer_id = c.customer_id)
+                          Filter: ((status)::text = 'DELIVERED'::text)
+                          Rows Removed by Filter: 1
+                          Heap Fetches: 0
+                          Index Searches: 80000
+                          Buffers: shared hit=352732 read=19039 written=41
+Planning:
+  Buffers: shared hit=384 read=6
+Planning Time: 0.672 ms
+Execution Time: 174.796 ms
+=== R20 run 2 ===
+Limit  (cost=385012.77..385012.82 rows=20 width=56) (actual time=168.933..168.934 rows=20.00 loops=1)
+  Buffers: shared hit=354607 read=23801
+  ->  Sort  (cost=385012.77..385212.77 rows=80000 width=56) (actual time=168.932..168.933 rows=20.00 loops=1)
+        Sort Key: (sum(o.total_amount)) DESC
+        Sort Method: top-N heapsort  Memory: 27kB
+        Buffers: shared hit=354607 read=23801
+        ->  Nested Loop  (cost=4.60..382884.00 rows=80000 width=56) (actual time=0.055..162.734 rows=79547.00 loops=1)
+              Buffers: shared hit=354604 read=23801
+              ->  Seq Scan on customers c  (cost=0.00..12884.00 rows=80000 width=16) (actual time=0.018..19.726 rows=80000.00 loops=1)
+                    Filter: (city_id = 2)
+                    Rows Removed by Filter: 420000
+                    Buffers: shared read=6634
+              ->  Aggregate  (cost=4.60..4.62 rows=1 width=40) (actual time=0.002..0.002 rows=0.99 loops=80000)
+                    Filter: (count(*) > 0)
+                    Rows Removed by Filter: 0
+                    Buffers: shared hit=354604 read=17167
+                    ->  Index Only Scan using orders_customer_placed_idx on orders o  (cost=0.43..4.57 rows=6 width=5) (actual time=0.001..0.001 rows=5.23 loops=80000)
+                          Index Cond: (customer_id = c.customer_id)
+                          Filter: ((status)::text = 'DELIVERED'::text)
+                          Rows Removed by Filter: 1
+                          Heap Fetches: 0
+                          Index Searches: 80000
+                          Buffers: shared hit=354604 read=17167
+Planning:
+  Buffers: shared hit=338 read=52
+Planning Time: 1.036 ms
+Execution Time: 168.962 ms
+=== R20 run 3 ===
+Limit  (cost=385012.77..385012.82 rows=20 width=56) (actual time=170.891..170.893 rows=20.00 loops=1)
+  Buffers: shared hit=354325 read=24083
+  ->  Sort  (cost=385012.77..385212.77 rows=80000 width=56) (actual time=170.891..170.891 rows=20.00 loops=1)
+        Sort Key: (sum(o.total_amount)) DESC
+        Sort Method: top-N heapsort  Memory: 27kB
+        Buffers: shared hit=354325 read=24083
+        ->  Nested Loop  (cost=4.60..382884.00 rows=80000 width=56) (actual time=0.067..164.420 rows=79547.00 loops=1)
+              Buffers: shared hit=354322 read=24083
+              ->  Seq Scan on customers c  (cost=0.00..12884.00 rows=80000 width=16) (actual time=0.021..19.818 rows=80000.00 loops=1)
+                    Filter: (city_id = 2)
+                    Rows Removed by Filter: 420000
+                    Buffers: shared read=6634
+              ->  Aggregate  (cost=4.60..4.62 rows=1 width=40) (actual time=0.002..0.002 rows=0.99 loops=80000)
+                    Filter: (count(*) > 0)
+                    Rows Removed by Filter: 0
+                    Buffers: shared hit=354322 read=17449
+                    ->  Index Only Scan using orders_customer_placed_idx on orders o  (cost=0.43..4.57 rows=6 width=5) (actual time=0.001..0.001 rows=5.23 loops=80000)
+                          Index Cond: (customer_id = c.customer_id)
+                          Filter: ((status)::text = 'DELIVERED'::text)
+                          Rows Removed by Filter: 1
+                          Heap Fetches: 0
+                          Index Searches: 80000
+                          Buffers: shared hit=354322 read=17449
+Planning:
+  Buffers: shared hit=338 read=52
+Planning Time: 0.703 ms
+Execution Time: 170.921 ms
